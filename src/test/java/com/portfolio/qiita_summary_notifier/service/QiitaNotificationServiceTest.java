@@ -1,6 +1,7 @@
 package com.portfolio.qiita_summary_notifier.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -114,6 +115,11 @@ class QiitaNotificationServiceTest {
         // Geminiから要約が返ってきたことにする
         when(summarizer.fetchSummaryOfArticle(article))
                 .thenReturn(summary);
+
+        when(notificationSender.notifyNewArticles(
+        eq("https://example.com/webhook"),
+        anyList()))
+        .thenReturn(true);
 
         // 4. テスト対象の処理を実行する
         service.deliverArticles(setting);

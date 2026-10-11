@@ -2,6 +2,7 @@ package com.portfolio.qiita_summary_notifier.config;
 
 import java.time.Duration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.retry.RetryPolicy;
@@ -9,6 +10,11 @@ import org.springframework.core.retry.RetryTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+
+import com.google.genai.errors.ClientException;
+import com.google.genai.errors.GenAiIOException;
+import com.google.genai.errors.ServerException;
+import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiRateLimitException;
 
 // RetryTemplateを作るための設定クラス
 @Configuration
@@ -25,17 +31,68 @@ public class RetryConfig {
      * delay:       最初にリトライするまでのディレイ
      * multiplier:  再試行時に遅延時間を増やすときの指数
      * maxDelay:    ディレイの最大値、増えすぎないようにするため
+     * 
+     * 現在は同じ設定だが、今後変わる可能性も十分あるので個別に設定する
+     */
+
+    /**memo: HTTPステータスコード
+     * HttpClientErrorException: 400~499
+     *  こちら側が何かミスがあるときのコード
+     *  前提が間違っているのでリトライしない
+     * HttpServerErrorException: 500~599
+     *  サーバー側の不具合
+     *  内部エラーやリクエスト過多でパンクしてたりなので、時間をおいて再度リトライ
+     * ResourceAccessException: ステータスコード無し
+     *  HTTP応答が返ってこない状態
+     *  サーバーがダウンしていたり、通信が切れたりした時なので、時間をおいて再度リトライ
      */
     @Bean
+    @Qualifier ("qiitaRestClient")
     public RetryTemplate qiitaRetryTemplate() {
         return new RetryTemplate(
             RetryPolicy.builder()
-                    .maxRetries(3)
+                    .maxRetries(2)
                     .includes(ResourceAccessException.class, HttpServerErrorException.class)
                     .excludes(HttpClientErrorException.class)
                     .delay(Duration.ofSeconds(2))
                     .multiplier(2.0)
                     .maxDelay(Duration.ofSeconds(10))
+                    .build()
+        );
+    }
+
+    @Bean 
+    @Qualifier ("discordRestClient")
+    public RetryTemplate discordRetryTemplate() {
+        return new RetryTemplate(
+            RetryPolicy.builder()
+                    .maxRetries(2)
+                    .includes(ResourceAccessException.class, HttpServerErrorException.class)
+                    .excludes(HttpClientErrorException.class)
+                    .delay(Duration.ofSeconds(2))
+                    .multiplier(2.0)
+                    .maxDelay(Duration.ofSeconds(10))
+                    .build()
+        );
+    }
+
+    /**memo: google.genaiの例外クラス
+     * 基本的には既存の例外と変わらないはず
+     */
+    @Bean 
+    @Qualifier ("geminiClient")
+    public RetryTemplate geminiRetryTemplate() {
+        return new RetryTemplate(
+            RetryPolicy.builder()
+                    .maxRetries(2)
+                    .includes(
+                        ServerException.class, 
+                        GenAiIOException.class, 
+                        GeminiRateLimitException.class)
+                    .excludes(ClientException.class)
+                    .delay(Duration.ofSeconds(5))
+                    .multiplier(2.0)
+                    .maxDelay(Duration.ofSeconds(20))
                     .build()
         );
     }

@@ -26,18 +26,14 @@ public class QiitaApiClient implements ArticleProvider{
     private final RetryTemplate retryTemplate;
     private final RestClient restClient;
 
-    public QiitaApiClient(@Qualifier("qiitaRestClient") RestClient restClient, RetryTemplate retryTemplate) {
+    public QiitaApiClient(
+        @Qualifier("qiitaRestClient") RestClient restClient, 
+        @Qualifier("qiitaRetryTemplate") RetryTemplate retryTemplate
+    ) {
         this.restClient = restClient;
         this.retryTemplate = retryTemplate;
     }
 
-    /**memo: 処理のリトライ
-     * retryableアノテーションを使ってリトライ処理が可能になる
-     * アノテーションはメインクラス、または設定クラスに@Retryableが必要？
-     * 調べた情報やAIが出した情報はバージョンが違うせいか結構違う
-     * それぞれ引数で拾う/拾わない例外を設定したり、リトライ回数やディレイ、指数バックオフの設定などもできる
-     * IDEに従って書いただけなので詳細がわかってない
-     */
     @Override 
     public List<Article> fetchArticles(String includeTags, String excludeTags) {
         
@@ -128,7 +124,7 @@ public class QiitaApiClient implements ArticleProvider{
         URI uri = UriComponentsBuilder.fromUriString("https://qiita.com/api/v2/items")
                 .queryParam("query", searchQuery + " sort:created")
                 .queryParam("page", 1)
-                .queryParam("per_page", 1)
+                .queryParam("per_page", 2)
                 .encode()   // uriのエンコードを指定 デフォルトでUTF-8
                 .build()    // UriComponentsオブジェクトを生成
                 .toUri();   // Uriオブジェクトに変換

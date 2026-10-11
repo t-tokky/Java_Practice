@@ -6,5 +6,5 @@ import java.util.List;
 public interface NotificationSender {
     // 現時点ではString summaryとしている
     // 今後は要約だけでなく、タイトルとURLも追加したクラスを渡すかもしれない
-    public void notifyNewArticles(String webhookUrl, List<ArticleWithSummary> unformattedDataList);
+    public boolean notifyNewArticles(String webhookUrl, List<ArticleWithSummary> unformattedDataList);
 }

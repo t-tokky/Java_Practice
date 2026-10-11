@@ -100,8 +100,8 @@ class QiitaApiClientTest {
     void HTTP応答が500なら再試行後に空のリストを返す() {
         TestFixture fixture = createTestFixture();
 
-        // maxRetries(3)なので、初回1回＋再試行3回＝合計4回
-        fixture.server.expect(times(4), request -> {
+        // maxRetries(3)なので、初回1回＋再試行2回＝合計3回
+        fixture.server.expect(times(3), request -> {
             assertEquals("qiita.com", request.getURI().getHost());
         }).andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
@@ -110,7 +110,7 @@ class QiitaApiClientTest {
         // 規定回数の再試行後も失敗したので、空のリストを返す
         assertTrue(articles.isEmpty());
 
-        // 4回リクエストされたことを確認
+        // 3回リクエストされたことを確認
         fixture.server.verify();
     }
 

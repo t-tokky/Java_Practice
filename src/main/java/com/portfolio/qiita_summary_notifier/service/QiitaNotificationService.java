@@ -62,33 +62,31 @@ public class QiitaNotificationService {
         List<Article> latestArticles = articles.stream()
                 .filter(article -> !notificationLogMapper.existsBySettingIdAndArticleId(settingId, article.getId()))
                 .toList();
-
-        // 新しい記事が見つからなかったら見つからなかったことを伝えてメソッドを終える
-        // 例外処理の追加のタイミングで修正
-        // 見つからなかったことを伝える専用のembedを作って配信が一番まるそう
-        // discordのエラー以外必ず通知したいからフラグ管理にしてgeminiへの問い合わせをif文で囲った方がよさそう？
-        // if (latestArticles.isEmpty()) {
-        //     notificationSender.notifyNewArticles(setting.getWebhookUrl(), "新規記事がありませんでした");
-        //     return;
-        // }
+        /**memo: 記事がなかった時
+         * この地点や次の地点で記事が取得できない場合
+         * 要素数0のリストオブジェクトはstreamやforを使うと、処理をスキップする
+         * 例外は出ないので、分岐させて早めに通知メソッドを呼ぶ必要はない
+         */
 
         // 要約を取り出して、記事データと合わせてオブジェクトにする
         // 要約は都度呼び出すことで、例外発生時にスキップできるようになった
         List<ArticleWithSummary> unformattedList = new ArrayList<>();
         for (Article article : latestArticles) {
-            ArticleWithSummary unformattedData = 
+            ArticleWithSummary unformattedData = // fetchが空ならnullpointerが起きる
                 new ArticleWithSummary(article, summarizer.fetchSummaryOfArticle(article));
             unformattedList.add(unformattedData);
         }
 
         // Discordへ通知
-        notificationSender.notifyNewArticles(
+        boolean isCompleteNotify = notificationSender.notifyNewArticles(
             setting.getWebhookUrl(), unformattedList
         );
 
         // 通知履歴をDBへ保存
-        for (Article sentArticle : latestArticles) {
-            notificationLogMapper.insertLog(settingId, sentArticle.getId());
+        if (isCompleteNotify) {
+            for (Article sentArticle : latestArticles) {
+                notificationLogMapper.insertLog(settingId, sentArticle.getId());
+            }
         }
     }
 }

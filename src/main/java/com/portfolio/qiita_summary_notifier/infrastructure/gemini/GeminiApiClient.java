@@ -1,15 +1,16 @@
 package com.portfolio.qiita_summary_notifier.infrastructure.gemini;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.retry.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 import com.google.genai.Client;
+import com.google.genai.errors.ClientException;
 import com.google.genai.gaos.models.interactions.Content;
 import com.google.genai.gaos.models.interactions.CreateModelInteraction;
 import com.google.genai.gaos.models.interactions.CreateModelInteractionResponseFormat;
@@ -23,13 +24,12 @@ import com.google.genai.gaos.models.interactions.TextContent;
 import com.google.genai.gaos.models.interactions.TextResponseFormat;
 import com.google.genai.gaos.models.interactions.TextResponseFormatMimeType;
 import com.google.genai.gaos.models.operations.CreateInteractionRequestBody;
-import com.google.genai.types.ClientOptions;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.dto.GeminiResponseDto;
+import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiRateLimitException;
 import com.portfolio.qiita_summary_notifier.service.Article;
 import com.portfolio.qiita_summary_notifier.service.Summarizer;
 
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
 import tools.jackson.databind.ObjectMapper;
 
 @Slf4j 
@@ -37,80 +37,73 @@ import tools.jackson.databind.ObjectMapper;
 public class GeminiApiClient implements Summarizer{
     
     private final Client client;
+    private final RetryTemplate retryTemplate;
     private final ObjectMapper objectMapper;
 
-    public GeminiApiClient(@Value("${gemini.api.token}") String apiToken, ObjectMapper objectMapper) {
-
+    public GeminiApiClient(
+        Client client, 
+        @Qualifier("geminiClient") RetryTemplate retryrTemplate, 
+        ObjectMapper objectMapper
+    ) {
+        this.client = client;
+        this.retryTemplate = retryrTemplate;
         // Json->ResponseDtoへの変換をするオブジェクト
         this.objectMapper = objectMapper;
-
-        /**memo: geminiAPIのClientオブジェクトを作成
-         * OkHttpClientでタイムアウト設定をしている
-         * geminiAPIライブラリは内部でOkHttpClientという別のライブラリを採用している(?)のでこちらの記述方法
-         * callTimeout: 全体のタイムアウト時間
-         * 
-         * ClientはgeminiAPIライブラリのオブジェクト
-         * 構造化スキーマやプロンプトの設定からHTTPリクエストまで全部やるオブジェクト
-         * new Client:      環境変数にapiKeyを置いておけば自動で読み込むので.apiKey()が必要ない
-         *                  今回はlocalから読み込むので.apiKeyが必要だった
-         * builder, build:  ビルダーパターンのひとつ
-         *                  最近のライブラリだとよく使われるらしい(RestClientもそうだった)
-         * apiKey:          apiKeyを設定  
-         * clientOptions:   引数でOkHttpClientオブジェクトをhttpClientオブジェクトとして作り直している(?)
-         */
-        OkHttpClient httpClient = new OkHttpClient.Builder()
-                .connectTimeout(Duration.ofSeconds(10)) // 接続確立まで
-                .readTimeout(Duration.ofSeconds(60))    // データ受信中の待ち時間
-                .callTimeout(Duration.ofSeconds(90))    // リクエスト全体
-                .build();
-        client = Client.builder()
-                .apiKey(apiToken)
-                .clientOptions(ClientOptions.builder()
-                        .customHttpClient(httpClient)
-                        .build())   
-                .build();
-
     }
 
-    /**memo: ここにgeminiAPIライブラリを追加
-     * 構造化のスキーマをprivateメソッドで追加
-     * tryブロックのrestClientで送っている部分をすべてgeminiAPIライブラリの
-     * clientオブジェクトに任せる
+    /**memo: 例外処理の流れ
+     * まずarticleがnullなことはない(その場合、このメソッドが実行されないので)
+     * 
      */
     @Override
     public GeminiResponseDto fetchSummaryOfArticle(Article article) {
 
         // スキーマの定義からプロンプトまで作成
         CreateModelInteraction params = createPrompt(article.getTitle(), article.getBody());
-        // ここでリクエストを送って戻ってきたものをinteraction変数に格納
-        Interaction interaction = 
-            client.interactions.create(CreateInteractionRequestBody.of(params)).interaction().get();
 
-        log.debug("interactionの中身: {}", interaction);
-        
-        // 要約を取り出す処理
-        StringBuilder output = new StringBuilder();
-        for (Step step : interaction.steps().orElse(List.of())) {
-            if (step instanceof ModelOutputStep modelOutputStep) {
-                for (Content content : modelOutputStep.content().orElse(List.of())) {
-                    if (content instanceof TextContent textContent) {
-                        textContent.text().ifPresent(output::append);
-                    }
-                }
-            }
-        }
-
+        /**memo: リトライのためのネスト
+         * 外側のtry-catchとinvokeまでは他と一緒で、リトライ後の例外を外側でキャッチ
+         * 内側のtry-catchは429を別の例外に変換するためのブロック
+         * google.genai.errorsパッケージの例外は4つに分かれている
+         * その中の、ClientExceptionで捕捉される429だけはリトライさせたかったのでカスタム例外を使った
+         * e.code()でステータスコードを取り出し、429ならカスタム例外を投げるようにしている
+         * 
+         */
         try {
-            return objectMapper.readValue(output.toString(), GeminiResponseDto.class);
-        } catch(Exception e) {
-            /**fix: 例外処理
-             * どう処理をするか考えないといけない
-             */
+            return retryTemplate.invoke(() -> {
+                try {
+                    // ここでリクエストを送って戻ってきたものをinteraction変数に格納
+                    Interaction interaction = 
+                        client.interactions.create(CreateInteractionRequestBody.of(params)).interaction().get();
+
+                    log.debug("interactionの中身: {}", interaction);
+            
+                    // 要約を取り出す処理
+                    StringBuilder output = new StringBuilder();
+                    for (Step step : interaction.steps().orElse(List.of())) {
+                        if (step instanceof ModelOutputStep modelOutputStep) {
+                            for (Content content : modelOutputStep.content().orElse(List.of())) {
+                                if (content instanceof TextContent textContent) {
+                                    textContent.text().ifPresent(output::append);
+                                }
+                            }
+                        }
+                    }
+
+                    return objectMapper.readValue(output.toString(), GeminiResponseDto.class);
+
+                } catch (ClientException e) {
+                    if (e.code() == 429) {  // 429の場合だけリトライさせるために例外をすり替える
+                        throw new GeminiRateLimitException("Geminiのレート上限に到達", e);
+                    }
+                    throw e;
+                } 
+            });
+
+        } catch (RuntimeException e) {
             log.error("geminiAPIエラー: {}", e);
             return new GeminiResponseDto();
         }
-        // SummaryCache.saveCacheOfSummaryJson(article.getId(), output.toString());
-        // return output.length() > 0 ? output.toString() : "geminiAPIエラー";
     }
 
     private CreateModelInteraction createPrompt(String title, String body) {
