@@ -5,12 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.retry.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 import com.google.genai.Client;
-import com.google.genai.errors.ClientException;
 import com.google.genai.gaos.models.interactions.Content;
 import com.google.genai.gaos.models.interactions.CreateModelInteraction;
 import com.google.genai.gaos.models.interactions.CreateModelInteractionResponseFormat;
@@ -25,7 +22,6 @@ import com.google.genai.gaos.models.interactions.TextResponseFormat;
 import com.google.genai.gaos.models.interactions.TextResponseFormatMimeType;
 import com.google.genai.gaos.models.operations.CreateInteractionRequestBody;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.dto.GeminiResponseDto;
-import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiRateLimitException;
 import com.portfolio.qiita_summary_notifier.service.Article;
 import com.portfolio.qiita_summary_notifier.service.Summarizer;
 
@@ -37,16 +33,16 @@ import tools.jackson.databind.ObjectMapper;
 public class GeminiApiClient implements Summarizer{
     
     private final Client client;
-    private final RetryTemplate retryTemplate;
+    // private final RetryTemplate retryTemplate;
     private final ObjectMapper objectMapper;
 
     public GeminiApiClient(
         Client client, 
-        @Qualifier("geminiClient") RetryTemplate retryrTemplate, 
+        // @Qualifier("geminiClient") RetryTemplate retryrTemplate, 
         ObjectMapper objectMapper
     ) {
         this.client = client;
-        this.retryTemplate = retryrTemplate;
+        // this.retryTemplate = retryrTemplate;
         // Json->ResponseDtoへの変換をするオブジェクト
         this.objectMapper = objectMapper;
     }
@@ -70,8 +66,8 @@ public class GeminiApiClient implements Summarizer{
          * 
          */
         try {
-            return retryTemplate.invoke(() -> {
-                try {
+            // return retryTemplate.invoke(() -> {
+            //     try {
                     // ここでリクエストを送って戻ってきたものをinteraction変数に格納
                     Interaction interaction = 
                         client.interactions.create(CreateInteractionRequestBody.of(params)).interaction().get();
@@ -92,13 +88,13 @@ public class GeminiApiClient implements Summarizer{
 
                     return objectMapper.readValue(output.toString(), GeminiResponseDto.class);
 
-                } catch (ClientException e) {
-                    if (e.code() == 429) {  // 429の場合だけリトライさせるために例外をすり替える
-                        throw new GeminiRateLimitException("Geminiのレート上限に到達", e);
-                    }
-                    throw e;
-                } 
-            });
+                // } catch (ClientException e) {
+                //     if (e.code() == 429) {  // 429の場合だけリトライさせるために例外をすり替える
+                //         throw new GeminiRateLimitException("Geminiのレート上限に到達", e);
+                //     }
+                //     throw e;
+                // } 
+            // });
 
         } catch (RuntimeException e) {
             log.error("geminiAPIエラー: {}", e);

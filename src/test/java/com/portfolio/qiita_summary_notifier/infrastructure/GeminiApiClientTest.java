@@ -6,22 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntFunction;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.core.retry.RetryPolicy;
-import org.springframework.core.retry.RetryTemplate;
 
 import com.google.genai.Client;
-import com.google.genai.errors.ClientException;
-import com.google.genai.errors.GenAiIOException;
-import com.google.genai.errors.ServerException;
 import com.google.genai.types.HttpOptions;
+import com.google.genai.types.HttpRetryOptions;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.GeminiApiClient;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.dto.GeminiResponseDto;
-import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiRateLimitException;
 import com.portfolio.qiita_summary_notifier.service.Article;
 import com.sun.net.httpserver.HttpServer;
 
@@ -130,33 +124,42 @@ class GeminiApiClientTest {
                 + server.getAddress().getPort();
 
         Client geminiClient = Client.builder()
-                .apiKey("test-api-key")
-                .httpOptions(HttpOptions.builder()
-                        .baseUrl(baseUrl)
-                        .apiVersion("v1beta")
+        .apiKey("test-api-key")
+        .httpOptions(HttpOptions.builder()
+                .baseUrl(baseUrl)
+                .apiVersion("v1beta")
+                .retryOptions(HttpRetryOptions.builder()
+                        .attempts(3) // 初回を含めて最大3回
+                        .httpStatusCodes(
+                                429, 500, 501, 502, 503, 504,
+                                505, 506, 507, 508, 509, 510, 511)
+                        .initialDelay(0.0)
+                        .maxDelay(0.0)
+                        .jitter(0.0)
                         .build())
-                .build();
+                .build())
+        .build();
 
         GeminiApiClient apiClient = new GeminiApiClient(
                 geminiClient,
-                createTestRetryTemplate(),
+                // createTestRetryTemplate(),
                 new ObjectMapper());
 
         return new Fixture(server, geminiClient, apiClient, requestCount);
     }
 
-    private RetryTemplate createTestRetryTemplate() {
-        return new RetryTemplate(
-                RetryPolicy.builder()
-                        .maxRetries(2)
-                        .includes(
-                                ServerException.class,
-                                GenAiIOException.class,
-                                GeminiRateLimitException.class)
-                        .excludes(ClientException.class)
-                        .delay(Duration.ZERO)
-                        .build());
-    }
+    // private RetryTemplate createTestRetryTemplate() {
+    //     return new RetryTemplate(
+    //             RetryPolicy.builder()
+    //                     .maxRetries(2)
+    //                     .includes(
+    //                             ServerException.class,
+    //                             GenAiIOException.class,
+    //                             GeminiRateLimitException.class)
+    //                     .excludes(ClientException.class)
+    //                     .delay(Duration.ZERO)
+    //                     .build());
+    // }
 
     private Article createArticle() {
         Article article = new Article();
