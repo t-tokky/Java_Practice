@@ -100,7 +100,7 @@ class QiitaApiClientTest {
     void HTTP応答が500なら再試行後に空のリストを返す() {
         TestFixture fixture = createTestFixture();
 
-        // maxRetries(3)なので、初回1回＋再試行2回＝合計3回
+        // maxRetries(2)なので、初回1回＋再試行2回＝合計3回
         fixture.server.expect(times(3), request -> {
             assertEquals("qiita.com", request.getURI().getHost());
         }).andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -126,7 +126,7 @@ class QiitaApiClientTest {
 
         RetryTemplate retryTemplate = new RetryTemplate(
                 RetryPolicy.builder()
-                        .maxRetries(3)
+                        .maxRetries(2)
                         .includes(
                                 ResourceAccessException.class,
                                 HttpServerErrorException.class)

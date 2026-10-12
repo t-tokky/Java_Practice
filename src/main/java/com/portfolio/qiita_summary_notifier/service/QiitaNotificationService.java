@@ -6,14 +6,17 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
+import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiSummaryFailedException;
 import com.portfolio.qiita_summary_notifier.repository.NotificationLogMapper;
 import com.portfolio.qiita_summary_notifier.repository.NotificationSettingMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 // このクラスでインフラの3つのメソッドを使って出力する
 // ここで出力内容も整理すればいい...はず
 
+@Slf4j 
 @Service
 @RequiredArgsConstructor
 public class QiitaNotificationService {
@@ -72,9 +75,18 @@ public class QiitaNotificationService {
         // 要約は都度呼び出すことで、例外発生時にスキップできるようになった
         List<ArticleWithSummary> unformattedList = new ArrayList<>();
         for (Article article : latestArticles) {
-            ArticleWithSummary unformattedData = // fetchが空ならnullpointerが起きる
-                new ArticleWithSummary(article, summarizer.fetchSummaryOfArticle(article));
-            unformattedList.add(unformattedData);
+            /**memo: 例外処理の内容
+             * geminiから要約が返ってこなかった場合ここでキャッチ
+             * 中身を見て空か確認するよりも例外をキャッチした方が早いし不具合も起きないはず
+             */
+            try {
+                ArticleWithSummary unformattedData = 
+                    new ArticleWithSummary(article, summarizer.fetchSummaryOfArticle(article));
+                unformattedList.add(unformattedData);
+            } catch (GeminiSummaryFailedException e) {
+                log.error("GeminiApiエラー: {}", e);
+            }
+
         }
 
         // Discordへ通知

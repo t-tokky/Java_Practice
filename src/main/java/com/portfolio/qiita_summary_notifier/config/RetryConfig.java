@@ -71,24 +71,4 @@ public class RetryConfig {
         );
     }
 
-    /**memo: google.genaiの例外クラス
-     * 基本的には既存の例外と変わらないはず
-     */
-    // @Bean 
-    // @Qualifier ("geminiClient")
-    // public RetryTemplate geminiRetryTemplate() {
-    //     return new RetryTemplate(
-    //         RetryPolicy.builder()
-    //                 .maxRetries(2)
-    //                 .includes(
-    //                     ServerException.class, 
-    //                     GenAiIOException.class, 
-    //                     GeminiRateLimitException.class)
-    //                 .excludes(ClientException.class)
-    //                 .delay(Duration.ofSeconds(5))
-    //                 .multiplier(2.0)
-    //                 .maxDelay(Duration.ofSeconds(20))
-    //                 .build()
-    //     );
-    // }
 }

@@ -1,21 +1,28 @@
 package com.portfolio.qiita_summary_notifier.infrastructure;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.genai.Client;
+import com.google.genai.errors.ClientException;
+import com.google.genai.errors.ServerException;
 import com.google.genai.types.HttpOptions;
 import com.google.genai.types.HttpRetryOptions;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.GeminiApiClient;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.dto.GeminiResponseDto;
+import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiSummaryFailedException;
 import com.portfolio.qiita_summary_notifier.service.Article;
 import com.sun.net.httpserver.HttpServer;
 
@@ -47,12 +54,11 @@ class GeminiApiClientTest {
     }
 
     @Test
-    void HTTP応答が429の後に成功した場合はリトライして要約DTOを返す() throws IOException {
+    void HTTP応答が429の後に成功した場合はSDKがリトライして要約DTOを返す()
+            throws IOException {
         try (Fixture fixture = createFixture(attempt -> {
             if (attempt == 1) {
-                return new ApiResponse(429, """
-                        {"error":{"code":"RESOURCE_EXHAUSTED","message":"rate limited"}}
-                        """);
+                return new ApiResponse(429, errorJson());
             }
             return new ApiResponse(200, interactionJson());
         })) {
@@ -60,39 +66,60 @@ class GeminiApiClientTest {
                     fixture.client.fetchSummaryOfArticle(createArticle());
 
             assertEquals("Javaの例外処理", result.getTheme());
-            // 1回目の429がカスタム例外に変換され、再試行されたことを確認
             assertEquals(2, fixture.requestCount());
         }
     }
 
     @Test
-    void HTTP応答が400ではリトライせず空のDTOを返す() throws IOException {
+    void HTTP応答が400ではリトライせずGeminiSummaryFailedExceptionを投げる()
+            throws IOException {
         try (Fixture fixture = createFixture(
-                attempt -> new ApiResponse(400, """
-                        {"error":{"code":"INVALID_ARGUMENT","message":"bad request"}}
-                        """))) {
+                attempt -> new ApiResponse(400, errorJson()))) {
 
-            GeminiResponseDto result =
-                    fixture.client.fetchSummaryOfArticle(createArticle());
+            GeminiSummaryFailedException exception =
+                    assertThrows(
+                            GeminiSummaryFailedException.class,
+                            () -> fixture.client.fetchSummaryOfArticle(
+                                    createArticle()));
 
-            assertNull(result.getTheme());
-            // ClientExceptionはリトライ対象外
+            assertTrue(exception.getMessage().contains("article-1"));
+            assertInstanceOf(ClientException.class, exception.getCause());
             assertEquals(1, fixture.requestCount());
         }
     }
 
     @Test
-    void HTTP応答が500では規定回数リトライした後に空のDTOを返す() throws IOException {
+    void HTTP応答が500が続くと最大3回試行した後にGeminiSummaryFailedExceptionを投げる()
+            throws IOException {
         try (Fixture fixture = createFixture(
-                attempt -> new ApiResponse(500, """
-                        {"error":{"code":"INTERNAL","message":"server error"}}
-                        """))) {
+                attempt -> new ApiResponse(500, errorJson()))) {
 
-            GeminiResponseDto result =
-                    fixture.client.fetchSummaryOfArticle(createArticle());
+            GeminiSummaryFailedException exception =
+                    assertThrows(
+                            GeminiSummaryFailedException.class,
+                            () -> fixture.client.fetchSummaryOfArticle(
+                                    createArticle()));
 
-            assertNull(result.getTheme());
-            // maxRetries(2)なので初回1回＋再試行2回
+            assertTrue(exception.getMessage().contains("article-1"));
+            assertInstanceOf(ServerException.class, exception.getCause());
+            assertEquals(3, fixture.requestCount());
+        }
+    }
+
+    @Test
+    void HTTP応答が429が続くと最大3回試行した後にGeminiSummaryFailedExceptionを投げる()
+            throws IOException {
+        try (Fixture fixture = createFixture(
+                attempt -> new ApiResponse(429, errorJson()))) {
+
+            GeminiSummaryFailedException exception =
+                    assertThrows(
+                            GeminiSummaryFailedException.class,
+                            () -> fixture.client.fetchSummaryOfArticle(
+                                    createArticle()));
+
+            assertTrue(exception.getMessage().contains("article-1"));
+            assertInstanceOf(ClientException.class, exception.getCause());
             assertEquals(3, fixture.requestCount());
         }
     }
@@ -106,7 +133,8 @@ class GeminiApiClientTest {
         server.createContext("/", exchange -> {
             int attempt = requestCount.incrementAndGet();
             ApiResponse response = responder.apply(attempt);
-            byte[] responseBody = response.body().getBytes();
+            byte[] responseBody =
+                    response.body().getBytes(StandardCharsets.UTF_8);
 
             exchange.getResponseHeaders().set(
                     "Content-Type", "application/json");
@@ -123,46 +151,37 @@ class GeminiApiClientTest {
         String baseUrl = "http://localhost:"
                 + server.getAddress().getPort();
 
-        Client geminiClient = Client.builder()
-        .apiKey("test-api-key")
-        .httpOptions(HttpOptions.builder()
-                .baseUrl(baseUrl)
-                .apiVersion("v1beta")
-                .retryOptions(HttpRetryOptions.builder()
-                        .attempts(3) // 初回を含めて最大3回
-                        .httpStatusCodes(
-                                429, 500, 501, 502, 503, 504,
-                                505, 506, 507, 508, 509, 510, 511)
-                        .initialDelay(0.0)
-                        .maxDelay(0.0)
-                        .jitter(0.0)
-                        .build())
-                .build())
-        .build();
+        HttpRetryOptions retryOptions = HttpRetryOptions.builder()
+                .attempts(3) // 初回を含めて最大3回
+                .httpStatusCodes(
+                        IntStream.concat(
+                                IntStream.of(429),
+                                IntStream.rangeClosed(500, 599))
+                                .boxed()
+                                .toList())
+                .initialDelay(0.0)
+                .maxDelay(0.0)
+                .jitter(0.0)
+                .build();
 
-        GeminiApiClient apiClient = new GeminiApiClient(
-                geminiClient,
-                // createTestRetryTemplate(),
-                new ObjectMapper());
+        Client geminiClient = Client.builder()
+                .apiKey("test-api-key")
+                .httpOptions(HttpOptions.builder()
+                        .baseUrl(baseUrl)
+                        .apiVersion("v1beta")
+                        .retryOptions(retryOptions)
+                        .build())
+                .build();
+
+        GeminiApiClient apiClient =
+                new GeminiApiClient(geminiClient, new ObjectMapper());
 
         return new Fixture(server, geminiClient, apiClient, requestCount);
     }
 
-    // private RetryTemplate createTestRetryTemplate() {
-    //     return new RetryTemplate(
-    //             RetryPolicy.builder()
-    //                     .maxRetries(2)
-    //                     .includes(
-    //                             ServerException.class,
-    //                             GenAiIOException.class,
-    //                             GeminiRateLimitException.class)
-    //                     .excludes(ClientException.class)
-    //                     .delay(Duration.ZERO)
-    //                     .build());
-    // }
-
     private Article createArticle() {
         Article article = new Article();
+        article.setId("article-1");
         article.setTitle("テスト記事");
         article.setBody("テスト本文");
         return article;
@@ -186,6 +205,17 @@ class GeminiApiClientTest {
                   ]
                 }
                 """.formatted(escapedSummary);
+    }
+
+    private String errorJson() {
+        return """
+                {
+                  "error": {
+                    "code": "TEST_ERROR",
+                    "message": "test error"
+                  }
+                }
+                """;
     }
 
     private record ApiResponse(int statusCode, String body) {
