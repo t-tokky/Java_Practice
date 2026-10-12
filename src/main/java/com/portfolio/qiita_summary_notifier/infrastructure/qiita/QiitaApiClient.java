@@ -1,15 +1,13 @@
 package com.portfolio.qiita_summary_notifier.infrastructure.qiita;
 
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.retry.RetryTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -25,39 +23,22 @@ import lombok.extern.slf4j.Slf4j;
 @Component 
 public class QiitaApiClient implements ArticleProvider{
 
+    private final RetryTemplate retryTemplate;
     private final RestClient restClient;
-    /**memo: 環境変数の取得方法
-     * @Value("プロパティ名")でapplication.propertiesの"プロパティ名"の値を取得できる
-     * コマンドライン引数やOSの環境変数、独自に作ったファイルなど基本的に何でも値を持ってこれる？
-     * 後者は@PropertySourceなどを使うらしい 
-     */
-    public QiitaApiClient(@Value("${qiita.api.token}") String apiToken) {
 
-        /**memo: HTTPリクエスト
-         * RestClientを作る前にリクエストのタイムアウト設定をしている
-         * 接続までに10s, 返事を待つのに60s
-         */
-        HttpClient httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-        JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(httpClient);
-        factory.setReadTimeout(Duration.ofSeconds(60));
-
-        /**memo: RestClientの使い方    
-         * インスタンス生成時にRestClientを用意する
-         * builder()で独自の設定を追加する 
-         * このオブジェクトを使ってリクエストを送るとき、必ずヘッダーに引数の文字列を追加して送る
-        */
-        this.restClient = RestClient.builder()
-                .requestFactory(factory)
-                .defaultHeader("Authorization", "Bearer " + apiToken)  // 生成されるヘッダー：Authorization Bearer トークン 
-                .build();
+    public QiitaApiClient(
+        @Qualifier("qiitaRestClient") RestClient restClient, 
+        @Qualifier("qiitaRetryTemplate") RetryTemplate retryTemplate
+    ) {
+        this.restClient = restClient;
+        this.retryTemplate = retryTemplate;
     }
 
     @Override 
     public List<Article> fetchArticles(String includeTags, String excludeTags) {
         
         URI uri = createUri(includeTags, excludeTags);      
+        List<Article> articleList = new ArrayList<>();
         try {
             /**memo: APIから記事を取得
              * どのリクエストを送るかと、どうやって受け取るかを決めている
@@ -67,27 +48,27 @@ public class QiitaApiClient implements ArticleProvider{
              * body:    返ってきたjsonをDTOクラスの配列オブジェクトにする
              *          body()は双方向(Java<=>json)に変換可能
              */
-            QiitaArticleDto[] dtos = restClient.get()
+            retryTemplate.invoke(() -> {
+                QiitaArticleDto[] dtos = restClient.get()
                     .uri(uri)
                     .retrieve()
                     .body(QiitaArticleDto[].class);
 
-            List<Article> articleList = new ArrayList<>();
-            // 記事が取得できていればコンバート
-            if (dtos != null) {
-                for (QiitaArticleDto dto : dtos) {
-                    articleList.add(convertToArticle(dto));
+                // 記事が取得できていればコンバート
+                if (dtos != null) {
+                    for (QiitaArticleDto dto : dtos) {
+                        articleList.add(convertToArticle(dto));
+                    }
                 }
-            }
-
-            log.info("取得した記事数: {}件", articleList.size());
+                log.info("取得した記事数: {}件", articleList.size());   
+            });
 
             return articleList;
-
+            
         } catch(RestClientException e) {
             log.error("QiitaAPIエラー", e);
             return new ArrayList<>();
-        }
+        } 
     }
     // Queryを作成するメソッド
     private URI createUri(String includeTags, String excludeTags) {
@@ -157,7 +138,9 @@ public class QiitaApiClient implements ArticleProvider{
             dto.getTitle(),
             dto.getUrl(),
             dto.getBody(),
-            dto.getId()
+            dto.getId(),
+            dto.getUser(),
+            dto.getTags()
         );
     }
 }
