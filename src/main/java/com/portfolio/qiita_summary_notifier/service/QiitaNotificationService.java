@@ -3,6 +3,10 @@ package com.portfolio.qiita_summary_notifier.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.retry.RetryTemplate;
+import org.springframework.dao.DataAccessException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
@@ -27,18 +31,28 @@ public class QiitaNotificationService {
 
     private final NotificationSettingMapper notificationSettingMapper;
     private final NotificationLogMapper notificationLogMapper;
+
+    @Qualifier ("dbRetryTemplate")
+    private final RetryTemplate dbRetryTemplate;
     
-    /**fix: バッチ処理の追加とテスト
-     * バッチ処理のための@Scheduleなどを調べる
-     * テスト実行にはDBに有効なデータを入れる必要がある
-     * mockなどを作ってテストしていく必要がある
+    /**memo: ループ処理
+     * DBはクラウドを使用しているので、retry処理を入れている
+     * ここで記事が取得できなければ処理が動かない
      */
     // 有効な設定を全件取得してループで回す
+    @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
     public void execute() {
-        List<NotificationSetting> settingsList = 
-            notificationSettingMapper.selectActiveSettings();
-        for (NotificationSetting setting : settingsList) {
-            deliverArticles(setting);
+        try {
+            dbRetryTemplate.invoke(() -> {
+                List<NotificationSetting> settingsList = 
+                    notificationSettingMapper.selectActiveSettings();
+                for (NotificationSetting setting : settingsList) {
+                    deliverArticles(setting);
+                }
+            });
+        } catch(DataAccessException e) {
+            log.error("定期処理が実行できませんでした。\nDBにアクセスできません。\n{}", e);
+            return;
         }
     }
 
@@ -96,9 +110,16 @@ public class QiitaNotificationService {
 
         // 通知履歴をDBへ保存
         if (isCompleteNotify) {
-            for (Article sentArticle : latestArticles) {
-                notificationLogMapper.insertLog(settingId, sentArticle.getId());
+            try {
+                dbRetryTemplate.invoke(() -> {
+                    for (Article sentArticle : latestArticles) {
+                        notificationLogMapper.insertLog(settingId, sentArticle.getId());
+                    }
+                });
+            } catch (DataAccessException e) {
+                log.error("通知履歴の保存でエラー発生: {}", e);
             }
+
         }
     }
 }

@@ -2,16 +2,22 @@ package com.portfolio.qiita_summary_notifier.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.core.retry.RetryPolicy;
+import org.springframework.core.retry.RetryTemplate;
+import org.springframework.dao.TransientDataAccessException;
+import org.springframework.dao.TransientDataAccessResourceException;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.dto.GeminiResponseDto;
@@ -74,7 +80,8 @@ class QiitaNotificationServiceTest {
                 notificationSender,
                 summarizer,
                 notificationSettingMapper,
-                notificationLogMapper
+                notificationLogMapper,
+                createDbRetryTemplate(0)
         );
 
         // 2. テスト用の入力を用意する
@@ -151,5 +158,63 @@ class QiitaNotificationServiceTest {
 
         // 通知した記事の履歴が保存されたことを確認する
         verify(notificationLogMapper).insertLog(10, "article-001");
+    }
+
+    @Test
+    void execute_DBの一時エラー後に再試行して設定を処理する() {
+        ArticleProvider articleProvider = mock(ArticleProvider.class);
+        NotificationSender notificationSender = mock(NotificationSender.class);
+        Summarizer summarizer = mock(Summarizer.class);
+        NotificationSettingMapper settingMapper =
+                mock(NotificationSettingMapper.class);
+        NotificationLogMapper logMapper = mock(NotificationLogMapper.class);
+
+        QiitaNotificationService service = new QiitaNotificationService(
+                articleProvider,
+                notificationSender,
+                summarizer,
+                settingMapper,
+                logMapper,
+                createDbRetryTemplate(1)
+        );
+
+        List<NotificationSetting> settings = List.of(
+                createSetting(1, "Java"),
+                createSetting(2, "Spring")
+        );
+
+        when(settingMapper.selectActiveSettings())
+                .thenThrow(new TransientDataAccessResourceException("temporary DB error"))
+                .thenReturn(settings);
+        when(articleProvider.fetchArticles(anyString(), anyString()))
+                .thenReturn(List.of());
+
+        service.execute();
+
+        // 初回失敗＋1回再試行
+        verify(settingMapper, times(2)).selectActiveSettings();
+
+        // 再試行が成功し、2件とも処理された
+        verify(articleProvider).fetchArticles("Java", "");
+        verify(articleProvider).fetchArticles("Spring", "");
+    }
+
+    private RetryTemplate createDbRetryTemplate(int maxRetries) {
+        return new RetryTemplate(
+            RetryPolicy.builder()
+                    .maxRetries(maxRetries)
+                    .includes(TransientDataAccessException.class)
+                    .delay(Duration.ZERO)
+                    .build()
+        );
+    }
+
+    private NotificationSetting createSetting(Integer id, String includeTags) {
+        NotificationSetting setting = new NotificationSetting();
+        setting.setId(id);
+        setting.setIncludeTags(includeTags);
+        setting.setExcludeTags("");
+        setting.setWebhookUrl("https://example.com/webhook");
+        return setting;
     }
 }

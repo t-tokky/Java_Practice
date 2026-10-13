@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
+import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -64,6 +66,21 @@ public class RetryConfig {
                     .maxRetries(2)
                     .includes(ResourceAccessException.class, HttpServerErrorException.class)
                     .excludes(HttpClientErrorException.class)
+                    .delay(Duration.ofSeconds(2))
+                    .multiplier(2.0)
+                    .maxDelay(Duration.ofSeconds(10))
+                    .build()
+        );
+    }
+
+    @Bean 
+    @Qualifier ("dbRetryTemplate")
+    public RetryTemplate dbRetryTemplate() {
+        return new RetryTemplate(
+            RetryPolicy.builder()
+                    .maxRetries(2)
+                    .includes(TransientDataAccessException.class)
+                    .excludes(NonTransientDataAccessException.class)
                     .delay(Duration.ofSeconds(2))
                     .multiplier(2.0)
                     .maxDelay(Duration.ofSeconds(10))
