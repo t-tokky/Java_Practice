@@ -3,11 +3,11 @@ package com.portfolio.qiita_summary_notifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.resilience.annotation.EnableResilientMethods;
-import org.springframework.resilience.annotation.Retryable;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@Retryable 
-@EnableResilientMethods
+@EnableResilientMethods // retryableを有効化するため
+@EnableScheduling // スケジュールを使うため
 public class QiitaSummaryNotifierApplication {
 
 	public static void main(String[] args) {
