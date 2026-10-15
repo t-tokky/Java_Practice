@@ -48,6 +48,8 @@ copilot-instructions.md
 !.env.example
 *.local.properties
 application-local.properties
+gradle.properties
+
 ### ログ関係 ###
 *.log
 logs/
