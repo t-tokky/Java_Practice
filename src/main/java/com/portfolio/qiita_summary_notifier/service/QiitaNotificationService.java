@@ -56,9 +56,16 @@ public class QiitaNotificationService {
         }
     }
 
-    // 1つの設定に対しての記事取得から通知までの処理
+    /**memo: でもボタン追加によるオーバーライドメソッドの追加
+     * でもボタンを実装しようとしていろいろ試してメソッドをオーバーロードすることにした
+     * 場当たり感があるのでリファクタリングは必要
+     */
     public void deliverArticles(NotificationSetting setting) {
+        deliverArticles(setting, false);
+    }
 
+    // 1つの設定に対しての記事取得から通知までの処理
+    public boolean deliverArticles(NotificationSetting setting, boolean isDemo) {
         // 設定のタグリストを使って最新記事を取得
         String includeTags = setting.getIncludeTags();
         String excludeTags = setting.getExcludeTags();
@@ -109,7 +116,7 @@ public class QiitaNotificationService {
         );
 
         // 通知履歴をDBへ保存
-        if (isCompleteNotify) {
+        if (isCompleteNotify && !isDemo) {
             try {
                 dbRetryTemplate.invoke(() -> {
                     for (Article sentArticle : latestArticles) {
@@ -121,5 +128,8 @@ public class QiitaNotificationService {
             }
 
         }
+
+        // 通知が完了したかが重要なのでこれでいいはず
+        return isCompleteNotify;
     }
 }
