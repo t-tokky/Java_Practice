@@ -1,13 +1,39 @@
-<!-- <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html lang="ja">
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>demo</title>
+    <title>お試し通知機能</title>
 </head>
 <body>
     <h2>デモボタン画面</h2>
+    <p>Discordへお試しで通知ができます</p>
     
+    <!-- 縦に並べるために、1項目ずつ div で囲みます -->
+    <div class="setting">
+        <div>
+            <label for="include">検索タグ：</label>
+            <input type="text" id="include" placeholder="例: Java, Spring Boot">
+        </div>
+        
+        <div>
+            <label for="exclude">除外タグ：</label>
+            <input type="text" id="exclude" placeholder="例: AI, ポエム">
+        </div>
+        
+        <div>
+            <label for="webhookUrl">Webhook URL：</label>
+            <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
+        </div>
+    </div>
+    
+    <!-- JSの関数を呼び出すための onclick と、JSからボタンを操作・取得するための id を追加 -->
+    <button type="button" id="demoBtn">通知する</button>
+    
+    <!-- JSから結果メッセージを書き込む場所なので、classではなくidにします -->
+    <p id="sendResult"></p>
+
+    <!-- ここにJSを読み込む記述を追加します -->
+    <script th:src="@{/js/demo.js}"></script>
 </body>
-</html> -->
+</html>
