@@ -18,12 +18,22 @@
         <!-- このセクションに画像を追加
             <img th:src="@{images/ファイル名}" alt="説明">でおいておけばいい
             画像などはresources/static/images/に入れておく    
+            qiita公式へのリンクも欲しい
         -->
         <ol>
             <li>検索タグ・除外タグにQiitaのタグを「,」(カンマ)区切りで入力</li>
             <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
             <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
-        </ol>      
+        </ol>
+
+        <div class="guide-tabs">
+            <h4>WebhookURLの取得方法</h4> 
+            <div id="frame"></div>
+            <button type="button" id="prevBtn" class="change">前へ</button>
+            <button type="button" id="nextBtn" class="change">次へ</button><br>
+            <button type="button" class="pc tab-Btn">PC</button>
+            <button type="button" class="phone tab-Btn">スマホ</button>
+        </div>
     </section>
     
     <!-- 縦に並べるために、1項目ずつ div で囲みます -->
@@ -48,6 +58,7 @@
     <button type="button" id="demoBtn">通知する</button>
     <p id="result"></p>  <!-- ボタンを押した後のメッセージ欄 -->
 
+    <script th:src="@{/js/guide.js}"></script>
     <script th:src="@{/js/demo.js}"></script>
 </body>
 </html>

@@ -14,7 +14,6 @@ import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.Gemi
 import com.portfolio.qiita_summary_notifier.repository.NotificationLogMapper;
 import com.portfolio.qiita_summary_notifier.repository.NotificationSettingMapper;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 // このクラスでインフラの3つのメソッドを使って出力する
@@ -22,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j 
 @Service
-@RequiredArgsConstructor
 public class QiitaNotificationService {
 
     private final ArticleProvider articleProvider;
@@ -32,8 +30,30 @@ public class QiitaNotificationService {
     private final NotificationSettingMapper notificationSettingMapper;
     private final NotificationLogMapper notificationLogMapper;
 
-    @Qualifier ("dbRetryTemplate")
     private final RetryTemplate dbRetryTemplate;
+
+    /**memo: Beanに同じ型が複数あるとき
+     * 以前は@RequiredArgsConstructorを使っていたが、DIするBeanに判断がつかずアプリが起動できなかった
+     * lombokのアノテーションで作られたコンストラクタは、元のBeanにアノテーションがついていても
+     * 必ずしも引数に@Qualifierが付くわけではない
+     * 同じ型のBeanが複数ありコンストラクタがその型のBeanを引数とするときは、
+     * 明示的に自分で書く必要がある
+     */
+    public QiitaNotificationService(
+        ArticleProvider articleProvider,
+        NotificationSender notificationSender,
+        Summarizer summarizer,
+        NotificationSettingMapper notificationSettingMapper,
+        NotificationLogMapper notificationLogMapper,
+        @Qualifier("dbRetryTemplate") RetryTemplate dbRetryTemplate
+    ) {
+        this.articleProvider = articleProvider;
+        this.notificationSender = notificationSender;
+        this.summarizer = summarizer;
+        this.notificationSettingMapper = notificationSettingMapper;
+        this.notificationLogMapper = notificationLogMapper;
+        this.dbRetryTemplate = dbRetryTemplate;
+    }
     
     /**memo: ループ処理
      * DBはクラウドを使用しているので、retry処理を入れている

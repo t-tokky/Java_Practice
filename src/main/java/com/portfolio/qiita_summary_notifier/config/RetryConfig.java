@@ -44,7 +44,7 @@ public class RetryConfig {
      *  サーバーがダウンしていたり、通信が切れたりした時なので、時間をおいて再度リトライ
      */
     @Bean
-    @Qualifier ("qiitaRestClient")
+    @Qualifier ("qiitaRetryTemplate")
     public RetryTemplate qiitaRetryTemplate() {
         return new RetryTemplate(
             RetryPolicy.builder()
@@ -59,7 +59,7 @@ public class RetryConfig {
     }
 
     @Bean 
-    @Qualifier ("discordRestClient")
+    @Qualifier ("discordRetryTemplate")
     public RetryTemplate discordRetryTemplate() {
         return new RetryTemplate(
             RetryPolicy.builder()
