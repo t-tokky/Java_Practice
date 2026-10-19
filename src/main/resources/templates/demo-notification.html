@@ -7,10 +7,28 @@
 </head>
 <body>
     <h2>デモボタン画面</h2>
-    <p>Discordへお試しで通知ができます</p>
+    
+    <section class="overview">
+        <h3>概要</h3>
+        <p>Qiitaの記事をタグ検索で取得して、そのリンクや紹介文をDiscordに送ることができます</p>
+    </section>
+
+    <section class="how-to">
+        <h3>使い方</h3>
+        <!-- このセクションに画像を追加
+            <img th:src="@{images/ファイル名}" alt="説明">でおいておけばいい
+            画像などはresources/static/images/に入れておく    
+        -->
+        <ol>
+            <li>検索タグ・除外タグにQiitaのタグを「,」(カンマ)区切りで入力</li>
+            <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
+            <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
+        </ol>      
+    </section>
     
     <!-- 縦に並べるために、1項目ずつ div で囲みます -->
     <div class="setting">
+        <h3>入力フォーム</h3>
         <div>
             <label for="include">検索タグ：</label>
             <input type="text" id="include" placeholder="例: Java, Spring Boot">
@@ -27,13 +45,9 @@
         </div>
     </div>
     
-    <!-- JSの関数を呼び出すための onclick と、JSからボタンを操作・取得するための id を追加 -->
     <button type="button" id="demoBtn">通知する</button>
-    
-    <!-- JSから結果メッセージを書き込む場所なので、classではなくidにします -->
-    <p id="sendResult"></p>
+    <p id="result"></p>  <!-- ボタンを押した後のメッセージ欄 -->
 
-    <!-- ここにJSを読み込む記述を追加します -->
     <script th:src="@{/js/demo.js}"></script>
 </body>
 </html>

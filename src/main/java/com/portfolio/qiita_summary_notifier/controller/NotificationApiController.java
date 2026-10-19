@@ -23,8 +23,8 @@ public class NotificationApiController {
      * 送信できたかどうかを返す
      */
     @PostMapping("/demo")
-    public DemoResponse demoNotification(@RequestBody NotificationSetting setting, boolean isDemo) {
-        boolean success = qiitaNotificationService.deliverArticles(setting, isDemo);
+    public DemoResponse demoNotification(@RequestBody NotificationSetting setting) {
+        boolean success = qiitaNotificationService.deliverArticles(setting, true);
         if (success) {
             return new DemoResponse(success, "送信が成功しました");
         } else {
