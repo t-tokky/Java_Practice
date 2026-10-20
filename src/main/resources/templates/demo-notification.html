@@ -4,22 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お試し通知機能</title>
+    <!-- サーバーを起動しないテスト用にパスを複数記述 -->
+    <link rel="stylesheet" href="../static/css/style.css" 
+        th:href="@{/css/style.css}">
 </head>
 <body>
     <h2>デモボタン画面</h2>
     
     <section class="overview">
         <h3>概要</h3>
-        <p>Qiitaの記事をタグ検索で取得して、そのリンクや紹介文をDiscordに送ることができます</p>
+        <p class="description">
+            このツールは、Qiitaから指定したタグの最新記事を検索し、Discordのテキストチャンネルに通知するサービスです。<br>
+            興味のある技術（Java、Spring Bootなど）のタグを指定するだけでなく、不要なタグを除外して自分専用の情報フィードを作成できます。
+        </p>
+
+        <div class="overview-links">
+            <a href="https://qiita.com" target="_blank" rel="noopener noreferrer" class="qiita-link">
+                Qiita公式サイト ↗
+            </a>
+            <a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer" class="qiita-link">
+                Qiitaタグ一覧 ↗
+            </a>
+        </div>
     </section>
 
     <section class="how-to">
         <h3>使い方</h3>
-        <!-- このセクションに画像を追加
-            <img th:src="@{images/ファイル名}" alt="説明">でおいておけばいい
-            画像などはresources/static/images/に入れておく    
-            qiita公式へのリンクも欲しい
-        -->
         <ol>
             <li>検索タグ・除外タグにQiitaのタグを「,」(カンマ)区切りで入力</li>
             <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
@@ -58,7 +68,12 @@
     <button type="button" id="demoBtn">通知する</button>
     <p id="result"></p>  <!-- ボタンを押した後のメッセージ欄 -->
 
-    <script th:src="@{/js/guide.js}"></script>
-    <script th:src="@{/js/demo.js}"></script>
+    <script src="../static/js/guide.js" th:src="@{/js/guide.js}"></script>
+    <script src="../static/js/demo.js" th:src="@{/js/demo.js}"></script>
 </body>
+<footer>
+    <p>※本サービスはQiitaの非公式ツールであり、Qiita株式会社とは一切関係ありません。</p>
+    <p>※検索して取得した記事の著作権は、それぞれの記事の著作者に帰属します。</p>
+    <p>※免責事項：本サービスを利用したことによって生じたトラブルや損害について、開発者は一切の責任を負いません。ご利用は自己責任でお願いいたします。</p>
+</footer>
 </html>
