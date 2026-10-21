@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.dao.DataAccessException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
@@ -60,7 +59,7 @@ public class QiitaNotificationService {
      * ここで記事が取得できなければ処理が動かない
      */
     // 有効な設定を全件取得してループで回す
-    @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
+    // @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
     public void execute() {
         try {
             dbRetryTemplate.invoke(() -> {
