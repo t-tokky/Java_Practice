@@ -1,0 +1,7 @@
+version: 2
+updates:
+  # Gradle（build.gradle）を監視する設定
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly" # チェック頻度（daily や monthly も可能）

@@ -1,0 +1,17 @@
+.git
+.gradle/
+build/
+bin/
+logs/
+notes/
+private/
+.vscode/
+
+.env
+.env.*
+
+*.log
+**/*.log
+
+.DS_Store
+Thumbs.db

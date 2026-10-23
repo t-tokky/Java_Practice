@@ -154,4 +154,47 @@ class DiscordWebhookClientTest {
             DiscordWebhookClient client,
             MockRestServiceServer server) {
     }
+
+
+//         @Test
+//         void 画像用ダミー() {
+//         String webhookUrl = "";
+
+//         var payload = new DiscordWebhookRequestDto();
+//         var embed = new DiscordWebhookRequestDto.Embed();
+
+//         embed.setTitle("【デモ】SpringBootで作る初めてのWebアプリ");
+//         embed.setUrl("https://example.com/demo-article");
+//         embed.setColor(5620992);
+//         embed.setAuthor(
+//                 new DiscordWebhookRequestDto.Author("demo_user (demo_user)")
+//         );
+//         embed.addField(
+//                 "テーマ",
+//                 "Spring Bootを用いたWebアプリケーション開発の基本構造と、最初の画面を表示するまでの手順についての記事です。",
+//                 false
+//         );
+//         embed.addField(
+//                 "ポイント",
+//                 "MVCアーキテクチャの概念から、Thymeleafを用いた動的なHTMLの生成、Controllerでのルーティング設定まで、サンプルコードを交えてWeb開発の基礎的な流れが学べます。",
+//                 false
+//         );
+//         embed.addField(
+//                 "読者層",
+//                 "Javaの基本構文を学習し終え、これからフレームワークを活用して本格的なWebアプリケーション開発に挑戦したいと考えているプログラミング初学者向け。",
+//                 false
+//         );
+//         embed.setFooter(
+//                 new DiscordWebhookRequestDto.Footer("Java, SpringBoot, Thymeleaf, 初心者, Web開発")
+//         );
+
+//         payload.addEmbed(embed);
+
+//         RestClient.create()
+//                 .post()
+//                 .uri(webhookUrl)
+//                 .body(payload)
+//                 .retrieve()
+//                 .toBodilessEntity();
+//     }
 }

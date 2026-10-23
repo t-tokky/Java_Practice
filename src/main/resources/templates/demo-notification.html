@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 検索エンジンのクロールに引っかからないようにするためのメタデータ -->
+    <meta name="robots" content="noindex">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お試し通知機能</title>
+    <!-- サーバーを起動しないテスト用にパスを複数記述 -->
+    <link rel="stylesheet" href="../static/css/style.css" 
+        th:href="@{/css/style.css}">
+</head>
+<body>
+    <h2>デモボタン画面</h2>
+    
+    <section class="overview">
+        <h3>概要</h3>
+        <p class="description">
+            このツールは、Qiitaから指定したタグの最新記事を検索し、Discordのテキストチャンネルに通知するサービスです。<br>
+            興味のある技術（Java、Spring Bootなど）のタグを指定するだけでなく、不要なタグを除外して自分専用の情報フィードを作成できます。
+        </p>
+
+        <div class="overview-links">
+            <a href="https://qiita.com" target="_blank" rel="noopener noreferrer" class="qiita-link">
+                Qiita公式サイト ↗
+            </a>
+            <a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer" class="qiita-link">
+                Qiitaタグ一覧 ↗
+            </a>
+        </div>
+    </section>
+
+    <section class="how-to">
+        <h3>使い方</h3>
+        <ol>
+            <li>検索タグ・除外タグにQiitaのタグを「,」(カンマ)区切りで入力</li>
+            <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
+            <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
+        </ol>
+
+        <div class="guide-tabs">
+            <h4>WebhookURLの取得方法</h4> 
+            <div id="frame"></div>
+            <button type="button" id="prevBtn" class="change">前へ</button>
+            <button type="button" id="nextBtn" class="change">次へ</button><br>
+            <button type="button" class="pc tab-Btn">PC</button>
+            <button type="button" class="phone tab-Btn">スマホ</button>
+        </div>
+    </section>
+    
+    <div class="setting">
+        <h3>入力フォーム</h3>
+        <div>
+            <label for="include">検索タグ：</label>
+            <input type="text" id="include" placeholder="例: Java, Spring Boot">
+        </div>
+        
+        <div>
+            <label for="exclude">除外タグ：</label>
+            <input type="text" id="exclude" placeholder="例: AI, ポエム">
+        </div>
+        
+        <div>
+            <label for="webhookUrl">Webhook URL：</label>
+            <input type="password" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
+        </div>
+    </div>
+    
+    <button type="button" id="demoBtn">通知する</button>
+    <p id="result"></p>  <!-- ボタンを押した後のメッセージ欄 -->
+
+    <script src="../static/js/guide.js" th:src="@{/js/guide.js}"></script>
+    <script src="../static/js/demo.js" th:src="@{/js/demo.js}"></script>
+</body>
+<footer>
+    <a href="https://github.com/t-tsubo/Java_Practice" target="_blank" class="github-link">
+        ソースコードを見る (GitHub)
+    </a>
+    <p>※本アプリはポートフォリオ用のデモです</p>
+    <p>※本サービスはQiitaの非公式ツールであり、Qiita株式会社とは一切関係ありません。</p>
+    <p>※検索して取得した記事の著作権は、それぞれの記事の著作者に帰属します。</p>
+    <p>※免責事項：本サービスを利用したことによって生じたトラブルや損害について、開発者は一切の責任を負いません。ご利用は自己責任でお願いいたします。</p>
+</footer>
+</html>

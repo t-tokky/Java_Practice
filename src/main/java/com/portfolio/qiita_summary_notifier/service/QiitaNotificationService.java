@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.dao.DataAccessException;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
@@ -14,7 +13,6 @@ import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.Gemi
 import com.portfolio.qiita_summary_notifier.repository.NotificationLogMapper;
 import com.portfolio.qiita_summary_notifier.repository.NotificationSettingMapper;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 // このクラスでインフラの3つのメソッドを使って出力する
@@ -22,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j 
 @Service
-@RequiredArgsConstructor
 public class QiitaNotificationService {
 
     private final ArticleProvider articleProvider;
@@ -32,15 +29,37 @@ public class QiitaNotificationService {
     private final NotificationSettingMapper notificationSettingMapper;
     private final NotificationLogMapper notificationLogMapper;
 
-    @Qualifier ("dbRetryTemplate")
     private final RetryTemplate dbRetryTemplate;
+
+    /**memo: Beanに同じ型が複数あるとき
+     * 以前は@RequiredArgsConstructorを使っていたが、DIするBeanに判断がつかずアプリが起動できなかった
+     * lombokのアノテーションで作られたコンストラクタは、元のBeanにアノテーションがついていても
+     * 必ずしも引数に@Qualifierが付くわけではない
+     * 同じ型のBeanが複数ありコンストラクタがその型のBeanを引数とするときは、
+     * 明示的に自分で書く必要がある
+     */
+    public QiitaNotificationService(
+        ArticleProvider articleProvider,
+        NotificationSender notificationSender,
+        Summarizer summarizer,
+        NotificationSettingMapper notificationSettingMapper,
+        NotificationLogMapper notificationLogMapper,
+        @Qualifier("dbRetryTemplate") RetryTemplate dbRetryTemplate
+    ) {
+        this.articleProvider = articleProvider;
+        this.notificationSender = notificationSender;
+        this.summarizer = summarizer;
+        this.notificationSettingMapper = notificationSettingMapper;
+        this.notificationLogMapper = notificationLogMapper;
+        this.dbRetryTemplate = dbRetryTemplate;
+    }
     
     /**memo: ループ処理
      * DBはクラウドを使用しているので、retry処理を入れている
      * ここで記事が取得できなければ処理が動かない
      */
     // 有効な設定を全件取得してループで回す
-    @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
+    // @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
     public void execute() {
         try {
             dbRetryTemplate.invoke(() -> {
@@ -56,9 +75,16 @@ public class QiitaNotificationService {
         }
     }
 
-    // 1つの設定に対しての記事取得から通知までの処理
+    /**memo: でもボタン追加によるオーバーライドメソッドの追加
+     * でもボタンを実装しようとしていろいろ試してメソッドをオーバーロードすることにした
+     * 場当たり感があるのでリファクタリングは必要
+     */
     public void deliverArticles(NotificationSetting setting) {
+        deliverArticles(setting, false);
+    }
 
+    // 1つの設定に対しての記事取得から通知までの処理
+    public boolean deliverArticles(NotificationSetting setting, boolean isDemo) {
         // 設定のタグリストを使って最新記事を取得
         String includeTags = setting.getIncludeTags();
         String excludeTags = setting.getExcludeTags();
@@ -109,7 +135,7 @@ public class QiitaNotificationService {
         );
 
         // 通知履歴をDBへ保存
-        if (isCompleteNotify) {
+        if (isCompleteNotify && !isDemo) {
             try {
                 dbRetryTemplate.invoke(() -> {
                     for (Article sentArticle : latestArticles) {
@@ -121,5 +147,8 @@ public class QiitaNotificationService {
             }
 
         }
+
+        // 通知が完了したかが重要なのでこれでいいはず
+        return isCompleteNotify;
     }
 }
