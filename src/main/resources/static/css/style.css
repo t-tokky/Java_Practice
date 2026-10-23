@@ -95,7 +95,8 @@ label {
     font-size: 14px;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
     width: 100%;
     box-sizing: border-box; /* paddingを含めた幅計算にする */
     padding: 12px 16px;
@@ -105,7 +106,8 @@ input[type="text"] {
     transition: border-color 0.2s;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="password"]:focus {
     outline: none;
     border-color: #4dabf7;
     box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
@@ -225,4 +227,17 @@ footer {
     background-color: #55c500;
     color: #ffffff;
     border-color: #55c500;
+}
+
+.github-link {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #495057;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.github-link:hover {
+    color: #007bff;
 }

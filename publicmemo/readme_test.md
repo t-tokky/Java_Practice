@@ -8,10 +8,9 @@ Qiitaの記事をタグで絞り込み、要約とともにDiscordへ通知す�
 
 デモ画面で検索タグ・除外タグ・Discord Webhook URLを入力し、
 通知ボタンを押すと、条件に合うQiita記事がDiscordへ送信されます。  
-<!-- 
-    ここに実際に利用したときの画像、docs/images/ からmarkdownで参照
-    スマホで画像をスクショして、一部を切り取り    
- -->
+
+**▼ Discordへの通知イメージ**  
+![Discord通知イメージ](docs/images/Discord_demo.png)
 
 ## 開発の背景・目的
 
