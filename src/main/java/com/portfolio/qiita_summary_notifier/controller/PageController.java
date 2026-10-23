@@ -12,6 +12,6 @@ public class PageController {
 
     @GetMapping ({"/", "/demo"})
     public String demo() {
-        return "/demo-notification";
+        return "demo-notification";
     }
 }
