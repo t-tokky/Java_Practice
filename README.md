@@ -4,7 +4,7 @@ Qiitaの記事をタグで絞り込み、要約とともにDiscordへ通知す�
 
 ## デモ
 
-[アプリを試す](公開URL)
+[アプリを試す](https://mou-kiita.onrender.com/)
 
 デモ画面で検索タグ・除外タグ・Discord Webhook URLを入力し、
 通知ボタンを押すと、条件に合うQiita記事がDiscordへ送信されます。  
