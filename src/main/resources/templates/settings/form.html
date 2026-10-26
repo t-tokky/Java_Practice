@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>入力フォーム</title>
 </head>
+<!-- 
+    新規・更新フォーム
+    新しく設定を追加するときも、既存設定を更新するときもこの画面を使って編集
+    まずはここから作る
+    ThymeleafのSqELという仕組みでgetterは.getField()と書かなくても.fieldだけでgetterだと解釈される
+
+    setting: 入ってくるオブジェクト
+-->
 <body>
-    
+    <h1 th:if="${setting.id == null}">設定の新規登録</h1>
+    <h1 th:if="${setting.id != null}">設定の編集</h1>
+
+    <form th:action="${setting.id == null} ? @{/settings/save} : @{/settings/update}"
+        th:object="${setting}" method="post">
+
+    </form>
 </body>
 </html>
