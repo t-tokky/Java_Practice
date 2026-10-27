@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 import com.portfolio.qiita_summary_notifier.form.SettingForm;
@@ -12,6 +13,8 @@ import com.portfolio.qiita_summary_notifier.helper.SettingHelper;
 import com.portfolio.qiita_summary_notifier.repository.NotificationSettingMapper;
 
 import lombok.RequiredArgsConstructor;
+
+
 
 
 
@@ -50,17 +53,24 @@ public class SettingsController {
         return "settings/form";
     }
 
-    /**memo: 新規登録
+    /**memo: 設定の登録
      * フォーム画面から受け取ったformオブジェクトをコンバートしてentityに変換
-     * O/R MapperでDBへ登録
-     * フラッシュメッセージを出したりreturnをリダイレクトにしないといけないかも
+     * DBに受け取ったデータを登録
+     * フラッシュメッセージと合わせてsettings/detailにリダイレクト
      */
     @PostMapping("/save")
-    public String createSetting(SettingForm form) {
+    public String createSetting(SettingForm form, RedirectAttributes redirectAttributes) {
         NotificationSetting setting = SettingHelper.convertSetting(form);
         settingMapper.insertSetting(setting);
-        // フラッシュメッセージとリダイレクト？
-        // htmlも合わせて修正
+        String message = (form.getId() == null) ? "設定を登録しました" : "設定を更新しました";
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/settings/detail";
     }
+
+    @GetMapping("/detail")
+    public String detailSetting() {
+        return "settings/detail";
+    }
+    
     
 }

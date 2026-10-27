@@ -17,9 +17,35 @@
     <h1 th:if="${setting.id == null}">設定の新規登録</h1>
     <h1 th:if="${setting.id != null}">設定の編集</h1>
 
-    <form th:action="${setting.id == null} ? @{/settings/save} : @{/settings/update}"
-        th:object="${setting}" method="post">
+    <form th:action="@{/settings/save}" th:object="${setting}" method="post">
+        <input type="hidden" th:field="*{id}">
 
+        <label for="includeTags">検索タグ</label>
+        <input type="text" th:field="*{includeTags}"><br>
+        
+        <label for="excludeTags">除外タグ</label>
+        <input type="text" th:field="*{excludeTags}"><br>
+        
+        <label for="webhookName">Webhookの名前</label>
+        <input type="text" th:field="*{webhookName}"><br>
+
+        <label for="webhookUrl">Webhook URL</label>
+        <input type="password" id="webhookUrl" name="webhookUrl" placeholder="https://discord.com/api/webhooks/..."><br>
+
+        <label for="isActive">通知の切り替え</label>
+        <input type="checkbox" ht:field="*{isActive}"><br>
+
+        <!-- 
+            これまだいらないかも よくわからないエラーが出てる
+            No static resource settings/@%7Bsettings/detail%7D.
+            /settings/detailにアクセスすると問題なくhtmlが表示される
+        -->
+        <a href="@{/settings/detail}">戻る</a>
+
+        <button type="submit" th:text="${setting.id == null} ? 登録 : 更新">
+            送信ボタン ここは上書きされる
+        </button>
     </form>
+
 </body>
 </html>
