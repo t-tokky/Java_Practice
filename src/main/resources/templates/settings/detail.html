@@ -10,6 +10,26 @@
     ボタンを配置して編集画面へ切り替わる
 -->
 <body>
-    
+    <h1>詳細画面</h1>
+    <div class="setting-detail" th:object="${setting}">
+        <p th:if="${message}" th:text="${message}">フラッシュメッセージがなければpタグ自体が消える</p>
+        <h2>現在の設定</h2>
+        <p>検索タグ<span th:text="*{includeTags}"></span></p>
+        <p>除外タグ<span th:text="*{excludeTags}"></span></p>
+        <p>Webhookの名前<span th:text="*{webhookName}"></span></p>
+        <p>
+            通知の切り替え
+            <span th:if="*{isActive}">通知あり</span>
+            <span th:if="!*{isActive}">通知なし</span>
+        </p>
+        <a th:href="@{/settings/form}">設定変更</a>
+
+        <!-- 
+            当初のラフだとここにテスト送信ボタンと説明 
+            今はいったんおいておく？
+            apiを呼ぶだけだが、メッセージはjsでデモ画面依存なので修正は必要
+        -->
+
+    </div>
 </body>
 </html>

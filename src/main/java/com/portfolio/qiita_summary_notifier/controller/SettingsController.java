@@ -55,20 +55,52 @@ public class SettingsController {
 
     /**memo: 設定の登録
      * フォーム画面から受け取ったformオブジェクトをコンバートしてentityに変換
+     * 新規ではない&&入力がない場合は既存のurlを使うと解釈し、DBからデータを取り出してセット
      * DBに受け取ったデータを登録
      * フラッシュメッセージと合わせてsettings/detailにリダイレクト
      */
+
+    /**TODO: 条件分岐のserviceクラスへの分離
+     * そもそもControllerでRepositoryのメソッドを直接呼び出していることが間違い
+     * Sesrviceクラスでメソッドを定義して、それをControllerが使う
+     * Serviceの階層構造も修正して、implディレクトリを作成
+     * メインのServiceは実装クラスの内容は知らなくていいので、インターフェースとだけ同じ階層にいればいい
+     * 
+     * 1. service/impl/を作る
+     * 2. service/にrepositoryを操作するメソッドの定義(インターフェース)を作成
+     * 3. service/impl/にインターフェースを実装した実装クラスを作成
+     * 4. このControllerクラスの処理を、実装クラスのメソッドを使ったものに差し替え
+     *      (saveメソッドの切り出しもここら辺)
+     */
     @PostMapping("/save")
-    public String createSetting(SettingForm form, RedirectAttributes redirectAttributes) {
+    public String saveSetting(SettingForm form, RedirectAttributes redirectAttributes) {
+        // 既存URLを使う場合にformのwebhookUrlをセット
+        if (form.getId() != null) {
+            if (form.getWebhookUrl() == null || form.getWebhookUrl().isEmpty()) {
+                NotificationSetting setting = settingMapper.selectById(form.getId());
+                form.setWebhookUrl(setting.getWebhookUrl());
+            }
+        }
+
         NotificationSetting setting = SettingHelper.convertSetting(form);
-        settingMapper.insertSetting(setting);
-        String message = (form.getId() == null) ? "設定を登録しました" : "設定を更新しました";
+        String message = "";
+        if (form.getId() == null) {
+            settingMapper.insertSetting(setting);
+            message = "設定を登録しました";
+        } else {
+            settingMapper.updateSetting(setting);
+            message = "設定を更新しました";
+        }
+
         redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/settings/detail";
     }
 
     @GetMapping("/detail")
-    public String detailSetting() {
+    public String detailSetting(Model model) {
+        Integer settingId = 1;
+        model.addAttribute("setting", settingMapper.selectById(settingId));
+
         return "settings/detail";
     }
     
