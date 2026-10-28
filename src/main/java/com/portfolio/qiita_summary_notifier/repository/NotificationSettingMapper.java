@@ -10,7 +10,7 @@ import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 @Mapper 
 public interface NotificationSettingMapper {
     // 設定の新規登録
-    void insertSetting(NotificationSetting setting);
+    void insert(NotificationSetting setting);
 
     // アクティブな設定の検索 リストで返す
     // 通知を送るときに使う
@@ -22,9 +22,9 @@ public interface NotificationSettingMapper {
     NotificationSetting selectById(@Param("id") Integer id);
 
     // 設定の更新
-    void updateSetting(NotificationSetting setting);
+    void update(NotificationSetting setting);
     // 設定の削除
-    void deleteSetting(@Param("id") Integer id);
+    void delete(@Param("id") Integer id);
 
     // 将来的にisActiveだけ切り替えるボタンも追加する
 }

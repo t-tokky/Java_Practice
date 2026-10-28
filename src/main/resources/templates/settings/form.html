@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入力フォーム</title>
+</head>
+<!-- 
+    新規・更新フォーム
+    新しく設定を追加するときも、既存設定を更新するときもこの画面を使って編集
+    まずはここから作る
+    ThymeleafのSqELという仕組みでgetterは.getField()と書かなくても.fieldだけでgetterだと解釈される
+
+    setting: 入ってくるオブジェクト
+-->
+<body>
+    <h1 th:if="${setting.id == null}">設定の新規登録</h1>
+    <h1 th:if="${setting.id != null}">設定の編集</h1>
+
+    <form th:action="@{/settings/save}" th:object="${setting}" method="post">
+        <input type="hidden" th:field="*{id}">
+
+        <label for="includeTags">検索タグ</label>
+        <input type="text" th:field="*{includeTags}"><br>
+        
+        <label for="excludeTags">除外タグ</label>
+        <input type="text" th:field="*{excludeTags}"><br>
+        
+        <label for="webhookName">Webhookの名前</label>
+        <input type="text" th:field="*{webhookName}"><br>
+
+        <label for="webhookUrl">Webhook URL</label>
+        <input type="password" id="webhookUrl" name="webhookUrl" placeholder="https://discord.com/api/webhooks/..."><br>
+
+        <label for="isActive">通知の切り替え</label>
+        <input type="checkbox" th:field="*{isActive}"><br>
+
+        <a th:href="@{/settings/detail(id=*{id})}">戻る</a>
+
+        <button type="submit" th:text="${setting.id == null} ? '登録' : '更新'">
+            送信ボタン ここは上書きされる
+        </button>
+    </form>
+
+</body>
+</html>
