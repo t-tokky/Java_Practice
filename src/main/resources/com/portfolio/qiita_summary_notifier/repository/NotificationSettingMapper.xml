@@ -3,7 +3,7 @@
 
 <mapper namespace="com.portfolio.qiita_summary_notifier.repository.NotificationSettingMapper">
     <!-- 新規登録 -->
-    <insert id="insertSetting">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO notification_settings (
             user_id, 
             include_tags,
@@ -39,7 +39,7 @@
         WHERE id = #{id}
     </select>
     <!-- 設定を更新する -->
-    <update id="updateSetting">
+    <update id="update">
         UPDATE notification_settings SET 
             include_tags = #{includeTags},
             exclude_tags = #{excludeTags},
@@ -50,7 +50,7 @@
         WHERE id = #{id}
     </update>
     <!-- 設定を削除する -->
-    <delete id="deleteSetting">
+    <delete id="delete">
         DELETE FROM notification_settings WHERE id = #{id}
     </delete>
 </mapper>

@@ -22,7 +22,7 @@
             <span th:if="*{isActive}">通知あり</span>
             <span th:if="!*{isActive}">通知なし</span>
         </p>
-        <a th:href="@{/settings/form}">設定変更</a>
+        <a th:href="@{/settings/form(id=*{id})}">設定変更</a>
 
         <!-- 
             当初のラフだとここにテスト送信ボタンと説明 

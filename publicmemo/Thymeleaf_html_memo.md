@@ -10,6 +10,10 @@
 - valueは実際に入力されている値
 - オブジェクトがないとエラーになる
 
+**th:href:** `th:href=@{url(parameter)}`
+- thでURLを記述するコード
+- 内部に`()`を入れるとURLパラメーター(クエリ)として解釈される
+
 ## HTML
 
 **labal:** `<label for="">`
