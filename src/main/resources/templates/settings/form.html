@@ -22,6 +22,8 @@
 
         <label for="includeTags">検索タグ</label>
         <input type="text" th:field="*{includeTags}"><br>
+
+        <!-- ここにバリデーションのエラーメッセージ -->
         
         <label for="excludeTags">除外タグ</label>
         <input type="text" th:field="*{excludeTags}"><br>
@@ -29,8 +31,12 @@
         <label for="webhookName">Webhookの名前</label>
         <input type="text" th:field="*{webhookName}"><br>
 
+        <!-- ここにバリデーションのエラーメッセージ -->
+
         <label for="webhookUrl">Webhook URL</label>
         <input type="password" id="webhookUrl" name="webhookUrl" placeholder="https://discord.com/api/webhooks/..."><br>
+
+        <!-- ここにバリデーションのエラーメッセージ -->
 
         <label for="isActive">通知の切り替え</label>
         <input type="checkbox" th:field="*{isActive}"><br>
