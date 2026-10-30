@@ -20,26 +20,42 @@
     <form th:action="@{/settings/save}" th:object="${setting}" method="post">
         <input type="hidden" th:field="*{id}">
 
-        <label for="includeTags">検索タグ</label>
-        <input type="text" th:field="*{includeTags}"><br>
+        <div>
+            <label for="includeTags">検索タグ</label>
+            <input type="text" th:field="*{includeTags}"><br>
 
-        <!-- ここにバリデーションのエラーメッセージ -->
+            <p th:if="${#fields.hasErrors('includeTags')}" th:errors="*{includeTags}" style="color: red;">
+                エラーメッセージの表示
+            </p>
+        </div>
         
-        <label for="excludeTags">除外タグ</label>
-        <input type="text" th:field="*{excludeTags}"><br>
-        
-        <label for="webhookName">Webhookの名前</label>
-        <input type="text" th:field="*{webhookName}"><br>
+        <div>
+            <label for="excludeTags">除外タグ</label>
+            <input type="text" th:field="*{excludeTags}"><br>
+        </div>
 
-        <!-- ここにバリデーションのエラーメッセージ -->
+        <div>
+            <label for="webhookName">Webhookの名前</label>
+            <input type="text" th:field="*{webhookName}"><br>
 
-        <label for="webhookUrl">Webhook URL</label>
-        <input type="password" id="webhookUrl" name="webhookUrl" placeholder="https://discord.com/api/webhooks/..."><br>
+            <p th:if="${#fields.hasErrors('webhookName')}" th:errors="*{webhookName}" style="color: red;">
+                エラーメッセージの表示
+            </p>
+        </div>
 
-        <!-- ここにバリデーションのエラーメッセージ -->
+        <div>
+            <label for="webhookUrl">Webhook URL</label>
+            <input type="password" id="webhookUrl" name="webhookUrl" placeholder="https://discord.com/api/webhooks/..."><br>
 
-        <label for="isActive">通知の切り替え</label>
-        <input type="checkbox" th:field="*{isActive}"><br>
+            <p th:if="${#fields.hasErrors('webhookUrl')}" th:errors="*{webhookUrl}" style="color: red;">
+                エラーメッセージの表示
+            </p>
+        </div>
+
+        <div>
+            <label for="isActive">通知の切り替え</label>
+            <input type="checkbox" th:field="*{isActive}"><br>
+        </div>
 
         <a th:href="@{/settings/detail(id=*{id})}">戻る</a>
 

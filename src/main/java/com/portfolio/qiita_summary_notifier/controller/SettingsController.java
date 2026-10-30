@@ -72,6 +72,7 @@ public class SettingsController {
         // 受け渡し方があっているのかよく分からない
         if (bindingResult.hasErrors()) {
             model.addAttribute("setting", form);
+
             return "setting/form";
         }
 
