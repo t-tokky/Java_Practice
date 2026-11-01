@@ -17,8 +17,8 @@ public class SettingForm {
     private String excludeTags;
     @NotBlank (message = "必須項目です")
     private String webhookName;
-    @NotBlank (message = "必須項目です")
-    @Pattern (regexp = "^https://discord\\.com/api/webhooks/\\d+/[a-zA-Z0-9_-]+$", message = "正しいURLを入力してください")
+    // ここで必須項目として入れてしまったことで空欄時の処理にたどり着かない
+    @Pattern (regexp = "^(https://discord\\.com/api/webhooks/\\d+/[a-zA-Z0-9_-]+)?$", message = "正しいURLを入力してください")
     @Size(max = 255, message = "正しいURLを入力してください")
     private String webhookUrl;
     private Boolean isActive;  // 入力されない可能性もあるのでオブジェクト型

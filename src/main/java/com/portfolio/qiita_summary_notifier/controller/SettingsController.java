@@ -64,16 +64,22 @@ public class SettingsController {
      */
     @PostMapping("/save")
     public String saveSetting(
-        @ModelAttribute @Validated SettingForm form, 
+        @ModelAttribute("setting") @Validated SettingForm form, 
         BindingResult bindingResult,
         RedirectAttributes redirectAttributes,
         Model model
     ) {    
-        // 受け渡し方があっているのかよく分からない
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("setting", form);
+        // 新規登録時のみwebhookUrlを必須にするメッセージを返す
+        if (form.getId() == null) {
+            if (form.getWebhookUrl() == null || form.getWebhookUrl().isEmpty()) {
+                bindingResult.rejectValue("webhookUrl", "", "新規登録時はWebhookURLが必須です");
+            }
+        }
 
-            return "setting/form";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("id", form.getId());
+
+            return "settings/form";
         }
 
         String message =  (form.getId() == null) ? "設定を登録しました" : "設定を更新しました";
@@ -83,6 +89,7 @@ public class SettingsController {
         redirectAttributes.addFlashAttribute("message", message);
         // urlの末尾にパラメーターを追加するメソッド(detail?id=値の形)
         redirectAttributes.addAttribute("id", setting.getId());
+
         return "redirect:/settings/detail";
     }
 
