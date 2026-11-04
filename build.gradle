@@ -24,6 +24,7 @@ dependencies {
 	implementation("com.google.genai:google-genai:1.74.0")
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-jackson'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-h2console'
@@ -36,6 +37,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 }
 
 tasks.named('test') {
