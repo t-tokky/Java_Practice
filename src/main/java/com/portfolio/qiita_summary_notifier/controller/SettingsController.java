@@ -2,6 +2,8 @@ package com.portfolio.qiita_summary_notifier.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,8 +64,24 @@ public class SettingsController {
      */
     @PostMapping("/save")
     public String saveSetting(
-        @ModelAttribute SettingForm form, RedirectAttributes redirectAttributes
+        @ModelAttribute("setting") @Validated SettingForm form, 
+        BindingResult bindingResult,
+        RedirectAttributes redirectAttributes,
+        Model model
     ) {    
+        // 新規登録時のみwebhookUrlを必須にするメッセージを返す
+        if (form.getId() == null) {
+            if (form.getWebhookUrl() == null || form.getWebhookUrl().isEmpty()) {
+                bindingResult.rejectValue("webhookUrl", "", "新規登録時はWebhookURLが必須です");
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("id", form.getId());
+
+            return "settings/form";
+        }
+
         String message =  (form.getId() == null) ? "設定を登録しました" : "設定を更新しました";
         NotificationSetting setting = SettingHelper.convertSetting(form);
         settingsService.saveSettings(setting);
@@ -71,6 +89,7 @@ public class SettingsController {
         redirectAttributes.addFlashAttribute("message", message);
         // urlの末尾にパラメーターを追加するメソッド(detail?id=値の形)
         redirectAttributes.addAttribute("id", setting.getId());
+
         return "redirect:/settings/detail";
     }
 
