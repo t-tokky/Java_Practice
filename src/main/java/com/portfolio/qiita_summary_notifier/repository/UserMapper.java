@@ -12,6 +12,7 @@ public interface UserMapper {
 
     UserEntity selectById(@Param("id") Integer id);
 
+    // 認証時に使う
     UserEntity selectByUsername(@Param("username") String username);
 
     void update(UserEntity user);

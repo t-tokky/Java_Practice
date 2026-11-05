@@ -15,11 +15,11 @@
         )
     </insert>
 
-    <select id="selectById" resultType="com.portfolio.qiita_summary_notifier.entity.User">
+    <select id="selectById" resultType="com.portfolio.qiita_summary_notifier.entity.UserEntity">
         SELECT * FROM users WHERE id = #{id}
     </select>
 
-    <select id="selectByUsername" resultType="com.portfolio.qiita_summary_notifier.entity.User">
+    <select id="selectByUsername" resultType="com.portfolio.qiita_summary_notifier.entity.UserEntity">
         SELECT * FROM users WHERE username = #{username}
     </select>
 
