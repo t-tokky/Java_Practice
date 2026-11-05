@@ -14,7 +14,7 @@ public class PasswordConfig {
      * これによって別アルゴリズムに移行しても接頭辞から識別が可能
      */
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

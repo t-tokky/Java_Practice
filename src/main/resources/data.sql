@@ -2,8 +2,8 @@
 -- users(仮)
 INSERT INTO users (username, password_hash, updated_at)
 VALUES 
-('user1', 'password', CURRENT_TIMESTAMP), 
-('user2', 'password', CURRENT_TIMESTAMP);
+('user1', '{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW', CURRENT_TIMESTAMP), 
+('user2', '{bcrypt}$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW', CURRENT_TIMESTAMP);
 
 -- notification_settings(仮)
 INSERT INTO notification_settings (
