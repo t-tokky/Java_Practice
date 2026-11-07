@@ -57,7 +57,7 @@
             <input type="checkbox" th:field="*{isActive}"><br>
         </div>
 
-        <a th:href="@{/settings/detail(id=*{id})}">戻る</a>
+        <a th:href="@{/settings/detail}">戻る</a>
 
         <button type="submit" th:text="${setting.id == null} ? '登録' : '更新'">
             送信ボタン ここは上書きされる

@@ -1,5 +1,6 @@
 package com.portfolio.qiita_summary_notifier.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,12 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 import com.portfolio.qiita_summary_notifier.form.SettingForm;
 import com.portfolio.qiita_summary_notifier.helper.SettingHelper;
+import com.portfolio.qiita_summary_notifier.security.CustomUserDetails;
 import com.portfolio.qiita_summary_notifier.service.SettingsService;
 
 import lombok.RequiredArgsConstructor;
@@ -46,9 +47,14 @@ public class SettingsController {
      * 値がなければ空のSettingFormオブジェクトを渡す
      */
     @GetMapping("/form")
-    public String formSetting(@RequestParam(name = "id", required = false) Integer settingId, Model model) {
-        if (settingId != null) {
-            model.addAttribute("setting", settingsService.selectById(settingId));
+    public String formSetting(
+        @AuthenticationPrincipal CustomUserDetails loginUser, 
+        Model model
+    ) {
+        Integer currentUserId = loginUser.getId();
+
+        if (currentUserId != null) {
+            model.addAttribute("setting", settingsService.selectById(currentUserId));
         } else {
             model.addAttribute("setting", new SettingForm());
         }
@@ -77,7 +83,7 @@ public class SettingsController {
         }
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("id", form.getId());
+            // model.addAttribute("id", form.getId());
 
             return "settings/form";
         }
@@ -87,15 +93,24 @@ public class SettingsController {
         settingsService.saveSettings(setting);
     
         redirectAttributes.addFlashAttribute("message", message);
-        // urlの末尾にパラメーターを追加するメソッド(detail?id=値の形)
-        redirectAttributes.addAttribute("id", setting.getId());
+        // // urlの末尾にパラメーターを追加するメソッド(detail?id=値の形)
+        // redirectAttributes.addAttribute("id", setting.getId());
 
         return "redirect:/settings/detail";
     }
 
+
+    // 現在はuserIdとsettingIdは1対1対応している
+    // なので、設定情報を取り出すselectById()に直接渡しても問題はない
+    // 今後ユーザーが複数の設定を持つことになったら、直接ではなく設定のIDを持ってきてからそれぞれ取得する必要がある
+    // 複数の設定を持ってくるのはshowSettings()の役割なので、拡張するときは流れが大きく変わる
     @GetMapping("/detail")
-    public String detailSetting(@RequestParam(name = "id") Integer settingId, Model model) {
-        model.addAttribute("setting", settingsService.selectById(settingId));
+    public String detailSetting(
+        @AuthenticationPrincipal CustomUserDetails loginUser, 
+        Model model
+    ) {
+        Integer currentUserId = loginUser.getId();
+        model.addAttribute("setting", settingsService.selectById(currentUserId));
 
         return "settings/detail";
     }
