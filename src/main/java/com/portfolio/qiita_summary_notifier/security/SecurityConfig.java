@@ -10,13 +10,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity 
 public class SecurityConfig {
 
-    /**memo: SecurityConfigの設定
-     * 許可が必要/不必要なURLを振り分けた
-     * 基本的には一部のみアクセスを許して、後は許可を求めるようにする
-     * これはあくまでログインしたユーザーすべてに設定しているので、
-     * ここからユーザー個別にアクセスする(DBの範囲)設定はまた別で作る必要がある
-     */
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http    // アクセス権限の範囲設定
@@ -27,12 +20,13 @@ public class SecurityConfig {
                     "/css/**",          // cssファイルのすべて
                     "/js/**",           // jsファイルのすべて
                     "/images/**",       // 画像のすべて
-                    "/error"            // エラー画面
+                    "/error",           // エラー画面
+                    "/signup"
                 ).permitAll()
                 .anyRequest().authenticated()   // 上記以外のすべてのURLは許可したユーザーのみ
         )   // ログイン時の設定
             .formLogin(form -> form
-                // .loginPage("/login") // 自作したログイン画面や処理をするときにコメントアウトをはずす
+                .loginPage("/login") // 自作したログイン画面や処理をするときにコメントアウトをはずす
                 .defaultSuccessUrl("/")
                 .permitAll()    // ログイン関係のすべてのURLへのアクセスを許可
         )   // ログアウト時の設定

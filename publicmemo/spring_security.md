@@ -114,4 +114,32 @@ Controllerが引数に`@AuthenticationPrincipal`をつけることで`SecurityCo
 
 本来は`AuthenticationManager`や`SecurityContextHolder`といったものが出てくるがいったん割愛  
 
-### メモ
+## ログインフォーム
+
+参考にしたURL(https://spring.pleiades.io/spring-security/reference/servlet/authentication/passwords/form.html)  
+基本的にはサンプルコードの形で十分  
+
+## ログアウト処理
+
+ログアウトの流れ
+1. **認証情報を破棄**  
+`SecurityContextHolder`(サーバー側？)に保持されているユーザーの認証情報を破棄する
+2. **セッションの無効化**  
+サーバー側の`HttpSession`を破棄する
+3. **Cookieの削除**  
+ブラウザ側の**JSESSIONID**などのCookieを削除
+4. **リダイレクト**  
+処理が終わったら指定のページへリダイレクト
+
+```html
+<form th:action="@{/logout}" method="post">
+    <button type="submit">ログアウト</button>
+</form>
+```
+ログアウトボタンの基本形  
+これもすでに用意してある`/logout`にpostで送る
+
+## メモ
+
+- `th:action`はただのアクション属性だけでなく、CSRFトークンを自動で付与したりしてくれる  
+これがないとログインできなかったりもする(403エラー)

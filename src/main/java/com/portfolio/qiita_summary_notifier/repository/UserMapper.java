@@ -15,6 +15,8 @@ public interface UserMapper {
     // 認証時に使う
     UserEntity selectByUsername(@Param("username") String username);
 
+    boolean existsByUsername(@Param("username") String username);
+
     void update(UserEntity user);
 
     void delete(@Param("id") Integer id);

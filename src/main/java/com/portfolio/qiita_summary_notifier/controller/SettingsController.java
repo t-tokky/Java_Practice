@@ -33,13 +33,13 @@ public class SettingsController {
      * テスト段階ではidを1に固定しておき、security導入後で変更する
      * 引数に@AuthenticationPrincipalというアノテーションを付けたオブジェクトを指定するらしい
      */
-    @GetMapping
-    public String showSettings(Model model) {
-        Integer userId = 1;  // 仮の値
-        model.addAttribute("settings", settingsService.selectByUserId(userId));
+    // @GetMapping
+    // public String showSettings(Model model) {
+    //     Integer userId = 1;  // 仮の値
+    //     model.addAttribute("settings", settingsService.selectByUserId(userId));
 
-        return "settings/menu";
-    }
+    //     return "settings/menu";
+    // }
     
     /**memo: 新規設定・設定更新
      * 設定の分岐はRequestParamで受け取る
@@ -72,8 +72,7 @@ public class SettingsController {
     public String saveSetting(
         @ModelAttribute("setting") @Validated SettingForm form, 
         BindingResult bindingResult,
-        RedirectAttributes redirectAttributes,
-        Model model
+        RedirectAttributes redirectAttributes
     ) {    
         // 新規登録時のみwebhookUrlを必須にするメッセージを返す
         if (form.getId() == null) {
