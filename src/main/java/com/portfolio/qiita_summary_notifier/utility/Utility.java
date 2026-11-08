@@ -9,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.portfolio.qiita_summary_notifier.security.PasswordConfig;
+import com.portfolio.qiita_summary_notifier.config.PasswordConfig;
 
 public class Utility {
     // インスタンス化されないように隠蔽

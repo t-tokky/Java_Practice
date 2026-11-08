@@ -32,6 +32,7 @@ public class SignupService {
         initSetting(user);
     }
 
+    // 初期設定をDBに追加
     private void initSetting(UserEntity user) {
         NotificationSetting setting = new NotificationSetting();
         setting.setUserId(user.getId());

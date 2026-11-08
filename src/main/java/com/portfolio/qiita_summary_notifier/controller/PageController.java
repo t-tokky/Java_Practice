@@ -26,6 +26,7 @@ public class PageController {
 
     @GetMapping("/login")
     public String showLogin(@AuthenticationPrincipal CustomUserDetails loginUser) {
+        // ログイン済みならdetailに飛ばす
         if (loginUser != null) {
             return "redirect:/settings/detail";
         }

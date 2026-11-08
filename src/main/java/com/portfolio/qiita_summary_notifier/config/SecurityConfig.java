@@ -1,4 +1,4 @@
-package com.portfolio.qiita_summary_notifier.security;
+package com.portfolio.qiita_summary_notifier.config;
 
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
