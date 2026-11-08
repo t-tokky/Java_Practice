@@ -52,8 +52,8 @@ public class SignupController {
         }
 
         signupService.registerUser(username, password);
-
         redirectAttributes.addFlashAttribute("message", "登録が完了しました");
+        
         return "redirect:/login";
     }
     

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="robots" content="noindex">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退会確認</title>
+</head>
+<body>
+    <h1>退会の確認</h1>
+    <p>
+        本当に退会しますか？<br>
+        退会すると、ユーザー情報及び設定データは完全に削除され、復元することはできません。
+    </p>
+
+    <a th:href="@{/settings/detail}">キャンセルして戻る</a>
+
+    <form th:action="@{/user/delete}" method="post">
+        <button type="submit">退会する</button>
+    </form>
+
+</body>
+</html>

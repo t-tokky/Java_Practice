@@ -16,6 +16,9 @@
         <div th:if="${param.logout}">
             <p style="color: blue">ログアウトしました</p>
         </div>
+        <div th:if="${param.deleted != null}">
+            <p style="color: blue">退会処理が完了しました</p>
+        </div>
 
         <p th:text="${message}">ユーザー登録後のメッセージ欄</p>
 

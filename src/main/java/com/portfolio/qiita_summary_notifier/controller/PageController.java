@@ -1,10 +1,13 @@
 package com.portfolio.qiita_summary_notifier.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.portfolio.qiita_summary_notifier.form.RegisterForm;
+import com.portfolio.qiita_summary_notifier.security.CustomUserDetails;
+
 
 
 
@@ -22,12 +25,21 @@ public class PageController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String showLogin(@AuthenticationPrincipal CustomUserDetails loginUser) {
+        if (loginUser != null) {
+            return "redirect:/settings/detail";
+        }
         return "login";
     }
 
     @GetMapping("/signup")
-    public String signup(@ModelAttribute("registerForm") RegisterForm form) {
+    public String showSignup(@ModelAttribute("registerForm") RegisterForm form) {
         return "signup";
     } 
+
+    @GetMapping("/user/delete/confirm")
+    public String showDeleteConfirm() {
+        return "delete-confirm";
+    }
+    
 }
