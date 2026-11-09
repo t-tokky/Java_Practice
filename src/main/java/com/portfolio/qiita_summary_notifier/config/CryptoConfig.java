@@ -7,6 +7,8 @@ import org.springframework.security.crypto.encrypt.AesGcmBytesEncryptor;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 
+import com.portfolio.qiita_summary_notifier.security.MyHexEncodingTextEncryptor;
+
 @Configuration 
 public class CryptoConfig {
 
@@ -19,13 +21,8 @@ public class CryptoConfig {
     // 暗号化のための道具(TextEncryptor)を作成する
     @Bean
     public TextEncryptor textEncryptor() {
-        
         // AES-GCM方式(暗号化+改ざんチェック)の暗号化の道具を作る
         BytesEncryptor bytesEncryptor = AesGcmBytesEncryptor.withPassword(secretKey, salt).build();
-
-        // ここを修正する
-        // BytesEncryptorをそのまま返していいはず
-        // 詳しくはメモ見る
-
+        return new MyHexEncodingTextEncryptor(bytesEncryptor);
     }
 }
