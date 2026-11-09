@@ -71,4 +71,10 @@
     <delete id="delete">
         DELETE FROM notification_settings WHERE id = #{id}
     </delete>
+
+    <update id="disableNotify">
+        UPDATE notification_settings 
+        SET is_active = false 
+        WHERE id = #{id}
+    </update>
 </mapper>

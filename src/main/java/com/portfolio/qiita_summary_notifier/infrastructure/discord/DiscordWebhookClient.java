@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -55,6 +56,9 @@ public class DiscordWebhookClient implements NotificationSender {
 
             // 空のリストを受け取っても通知は行うが、戻り値はfalse(記事は送れなかったため)
             return !unformattedDataList.isEmpty();
+        // 404だけ別の処理をさせたいので外に投げる
+        } catch(HttpClientErrorException.NotFound e) {
+            throw e;
         } catch (RestClientException e) {
             log.error("Discordへの送信時に発生: {}", e);
             return false;

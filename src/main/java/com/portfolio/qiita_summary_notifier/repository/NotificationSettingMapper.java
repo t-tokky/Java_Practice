@@ -26,5 +26,6 @@ public interface NotificationSettingMapper {
     // 設定の削除
     void delete(@Param("id") Integer id);
 
-    // 将来的にisActiveだけ切り替えるボタンも追加する
+    // isActiveをfalseにする
+    void disableNotify(@Param("id") Integer id);
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiSummaryFailedException;
@@ -75,8 +76,8 @@ public class QiitaNotificationService {
         }
     }
 
-    /**memo: でもボタン追加によるオーバーライドメソッドの追加
-     * でもボタンを実装しようとしていろいろ試してメソッドをオーバーロードすることにした
+    /**memo: デモボタン追加によるオーバーライドメソッドの追加
+     * デモボタンを実装しようとしていろいろ試してメソッドをオーバーロードすることにした
      * 場当たり感があるのでリファクタリングは必要
      */
     public void deliverArticles(NotificationSetting setting) {
@@ -130,9 +131,18 @@ public class QiitaNotificationService {
         }
 
         // Discordへ通知
-        boolean isCompleteNotify = notificationSender.notifyNewArticles(
-            setting.getWebhookUrl(), unformattedList
-        );
+        boolean isCompleteNotify = false;
+        try {
+            isCompleteNotify = notificationSender.notifyNewArticles(
+                setting.getWebhookUrl(), unformattedList
+            );
+        // URLが存在しない場合、is_activeをfalseにする
+        } catch (HttpClientErrorException.NotFound e) {
+            log.warn("Webhookの404エラー：ユーザーID{}の通知設定をOFFに切り替え", settingId);
+
+            notificationSettingMapper.disableNotify(settingId);
+        }
+
 
         // 通知履歴をDBへ保存
         if (isCompleteNotify && !isDemo) {

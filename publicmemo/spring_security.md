@@ -139,6 +139,44 @@ Controllerが引数に`@AuthenticationPrincipal`をつけることで`SecurityCo
 ログアウトボタンの基本形  
 これもすでに用意してある`/logout`にpostで送る
 
+## ログイン中の動き
+
+ユーザーがログインしているときは、`SecurityContextHolder`というスレッドに認証情報を紐づけるためのクラスを使って、ログインユーザーの判別を行う  
+ログインしているユーザーの情報は`@AuthenticationPrincipal`で取り出すことで、ユーザーごとの情報をDBから取り出したりできる
+
+## 新規ユーザー登録とユーザー削除
+
+DBにユーザー自身でアカウントを登録する処理のまとめ
+- ユーザーの入力を受け取り、バリデーションを行う
+- 受け取ったデータをDBに登録してユーザーアカウントを作成する
+- 今回は名前が一意に定まる必要があった(IDの役割)ので、使われているかどうかも確認
+
+ユーザー削除のまとめ
+- DBから今ログインしているユーザーの情報と一致するレコードを削除する
+- 同じタイミングで、ブラウザやサーバーに残った認証情報も削除する
+```java
+    SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+    logoutHandler.logout(request, response, auth);
+```
+- ログアウト処理のテンプレート
+- `@{/logout}`の中身はこの処理をしている
+
+## DBのデータの暗号化・復号
+
+DBにレコードを挿入するときに、カラムの一部を暗号化する流れのまとめ  
+**作成の流れ**
+1. `TextEncryptor`の作成  
+暗号化を行うための道具  
+2. `CryptoTypeHandler`の作成  
+MyBatisがJavaとDBの間で行われるデータ送受信の際に使う、データ型を変換するオブジェクト  
+TextEncryptorを使って暗号化した後に、データ型をDBとJavaで対応させる
+3. DBと`CryptoTypeHandler`のマッピング  
+DBに登録・DBから取得するときに使うデータ型自動変換器(TypeHandler)を紐づける
+
+- `TextEncryptor`作成時は、現在非推奨のものも混ざっていて躓いたが、ラップすることで解決した
+- `TypeHandler`は自分が書かなくてもMyBatisが用意してくれていて、今回はあるカラムだけ暗号化したかったので、デフォルトではない自動変換器(TypeHandler)を使った
+- MyBatisはDBのカラムとJavaオブジェクトのフィールドの紐づけも自動でしてくれているが、今回はwebhookURLだけを暗号化したかったので、対応表(`resultMap`)を書いた
+
 ## メモ
 
 - `th:action`はただのアクション属性だけでなく、CSRFトークンを自動で付与したりしてくれる  
