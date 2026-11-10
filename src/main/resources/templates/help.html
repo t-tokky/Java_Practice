@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="robots" content="noindex">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ヘルプ</title>
+</head>
+<body>
+    <h1>ヘルプページ</h1>
+    <div id="qa">
+        <h2>Q&A</h2>
+        <!-- Q&Aテンプレート この中に書く -->
+        <details class="qa-item">
+            <summary class="question">Q. Webhook URLとは何ですか？</summary>
+            <div class="answer">
+                <p>
+                    A. Discordの指定チャンネルにメッセージを送るための専用URLです。<br>
+                    URLを知っている人は、そのチャンネルに任意のメッセージを送ることができます。<br>
+                    <!-- 作成と削除の容易さについても追記したい -->
+                    重要な情報ですので、他人やインターネットに公開しないでください。
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. パスワードを忘れてしまいました。</summary>
+            <div class="answer">
+                <p>
+                    A. パスワードを忘れた場合、再発行することはできません。<br>
+                    登録したWebhook URLを削除し、新たにユーザー登録をし直してください。
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. 通知を停止したい。</summary>
+            <div class="answer">
+                <p>
+                    A. 設定画面から通知の切り替えが可能です。<br>
+                    DiscordでWebhook URLを削除することでも、通知を停止できます。
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. 通知が届きません。</summary>
+            <div class="answer">
+                <p>
+                    A. 以下の可能性があります。
+                    <ul>
+                        <li>設定したWebhook URLが間違っている</li>
+                        <li>設定したタグが存在しない・新規投稿がされていない</li>
+                        <li>通知設定がOFFになっている</li>
+                        <li>本サービスがストップしている</li>
+                    </ul>
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. 通知先のチャンネルを変更したい。</summary>
+            <div class="answer">
+                <p>
+                    A. 変更先のチャンネルで新しいWebhook URLを発行し、設定変更画面からURLを入力してください。
+                </p>
+            </div>
+        </details>
+    </div>
+
+    <div id="terms">
+        <h2>利用規約</h2>
+
+    </div>
+
+    <a th:href="@{/}">ホームへ戻る</a>
+    
+</body>
+</html>
