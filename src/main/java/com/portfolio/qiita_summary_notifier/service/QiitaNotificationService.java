@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.dao.DataAccessException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -60,8 +61,10 @@ public class QiitaNotificationService {
      * ここで記事が取得できなければ処理が動かない
      */
     // 有効な設定を全件取得してループで回す
-    // @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
+    // @Scheduled (cron = "0 * * * * *", zone = "Asia/Tokyo") // 毎分実行、テスト用
+    @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo") // AM7:30実行 本番用
     public void execute() {
+        log.info("バッチ処理を開始");
         try {
             dbRetryTemplate.invoke(() -> {
                 List<NotificationSetting> settingsList = 
@@ -74,6 +77,7 @@ public class QiitaNotificationService {
             log.error("定期処理が実行できませんでした。\nDBにアクセスできません。\n{}", e);
             return;
         }
+        log.info("バッチ処理が終了");
     }
 
     /**memo: デモボタン追加によるオーバーライドメソッドの追加
