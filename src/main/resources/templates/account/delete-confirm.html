@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>アカウント削除</title>
+</head>
+<body>
+
+<main>
+    <h1>アカウント削除の確認</h1>
+    <p>
+        本当にアカウントを削除しますか？<br>
+        削除すると、ユーザー情報及び設定データは完全に削除され、復元することはできません。
+    </p>
+
+    <a th:href="@{/settings/detail}">キャンセルして戻る</a>
+
+    <form th:action="@{/user/delete}" method="post">
+        <button type="submit">削除する</button>
+    </form>
+</main>
+
+</body>
+</html>

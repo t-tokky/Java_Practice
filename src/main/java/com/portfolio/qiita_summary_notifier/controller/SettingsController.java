@@ -118,10 +118,4 @@ public class SettingsController {
         return "settings/detail";
     }
     
-    @GetMapping("/batch-test")
-    public String batchTest() {
-        notificationService.execute();
-        return new String("実行");
-    }
-    
 }

@@ -34,21 +34,21 @@ public class SignupController {
         String passwordConfirm = form.getPasswordConfirm();
 
         if (bindingResult.hasErrors()) {  // バリデーション
-            return "signup";
+            return "account/signup";
         }
 
         // 確認用パスワードの一致を確認
         if (!password.equals(passwordConfirm)) {
             model.addAttribute("message", "確認用パスワードが一致しません");
 
-            return "signup";
+            return "account/signup";
         }
 
         // 名前が使われているかを確認
         if (userMapper.existsByUsername(username)) {
             model.addAttribute("message", "その名前は既に使われています");
 
-            return "signup";
+            return "account/signup";
         }
 
         signupService.registerUser(username, password);

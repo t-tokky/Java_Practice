@@ -24,7 +24,10 @@ public class SecurityConfig {
                     "/images/**",       // 画像のすべて
                     "/error",           // エラー画面
                     "/signup",          // アカウント作成画面
-                    "/login"            // ログイン画面を明示的に これを入れないとパラメータ付きがはじかれた
+                    "/login",           // ログイン画面を明示的に これを入れないとパラメータ付きがはじかれた
+                    "/qa",              // Q&A
+                    "/terms",           // 利用規約
+                    "/api/notifications/demo"   // デモ機能のAPI
                 ).permitAll()
                 .anyRequest().authenticated()   // 上記以外のすべてのURLは許可したユーザーのみ
         )   // ログイン時の設定
