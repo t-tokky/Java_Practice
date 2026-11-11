@@ -5,9 +5,9 @@
 </head>
 <body>
 
-<main>
+<main class="container">
     <h1>Q&A</h1>
-    <div id="qa">
+    <div class="qa-container">
         <details class="qa-item">
             <summary class="question">Q. Webhook URLとは何ですか？</summary>
             <div class="answer">
@@ -43,15 +43,14 @@
         <details class="qa-item">
             <summary class="question">Q. 通知が届きません。</summary>
             <div class="answer">
-                <p>
-                    A. 以下の可能性があります。
-                    <ul>
-                        <li>設定したWebhook URLが間違っている</li>
-                        <li>設定したタグが存在しない・新規投稿がされていない</li>
-                        <li>通知設定がOFFになっている</li>
-                        <li>本サービスがストップしている</li>
-                    </ul>
-                </p>
+                <!-- pタグの中にulタグを入れるとHTMLエラーになるため分離 -->
+                <p>A. 以下の可能性があります。</p>
+                <ul>
+                    <li>設定したWebhook URLが間違っている</li>
+                    <li>設定したタグが存在しない・新規投稿がされていない</li>
+                    <li>通知設定がOFFになっている</li>
+                    <li>本サービスがストップしている</li>
+                </ul>
             </div>
         </details>
 
@@ -64,8 +63,12 @@
             </div>
         </details>
     </div>
-    <a th:href="@{/}">ホームへ戻る</a>
-    <a th:href="@{/terms}">利用規約</a>
+    
+    <!-- リンクをグループ化 -->
+    <div class="page-links" style="margin-top: 2rem; display: flex; gap: 1rem;">
+        <a th:href="@{/}">ホームへ戻る</a>
+        <a th:href="@{/terms}">利用規約</a>
+    </div>
 </main>
 
 </body>

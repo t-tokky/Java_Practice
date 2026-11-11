@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>システムエラー</title>
+</head>
+<body>
+
+<main>
+    <h1>500</h1>
+    <h2>システムエラーが発生しました</h2>
+    <p>サーバー内で予期せぬエラーが発生し、処理を完了できませんでした。</p>
+    <p>ご不便をおかけして申し訳ありません。しばらく時間をおいてから再度お試しください。</p>
+    <a th:href="@{/}">トップページへ戻る</a>
+</main>
+
+</body>
+</html>

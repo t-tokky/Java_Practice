@@ -1,0 +1,365 @@
+/* ==========================================================================
+   あの話、もうQiita? 共通スタイルシート (style.css)
+   CSS作成ルールに完全に準拠したデザインシステム
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ベース設定 (Reset & Core Layout)
+   -------------------------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 24px 16px;
+}
+
+/* メインコンテンツの中央寄せ（最大幅 800px） */
+main {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 24px 32px;
+}
+
+/* --------------------------------------------------------------------------
+   2. ヘッダー & フッター
+   -------------------------------------------------------------------------- */
+header {
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 20px 32px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 12px;
+}
+
+header nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+header nav a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+header nav a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+footer {
+    max-width: 800px;
+    margin: 32px auto 0 auto;
+    text-align: center;
+    font-size: 13px;
+    color: #6c757d;
+    line-height: 1.8;
+}
+
+footer a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+footer p {
+    margin-top: 4px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 24px 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. カードデザイン & セクション構造
+   -------------------------------------------------------------------------- */
+section, 
+.signup, 
+.logout, 
+.delete-account, 
+.setting {
+    margin-bottom: 28px;
+}
+
+/* --------------------------------------------------------------------------
+   4. 見出し (Headings)
+   -------------------------------------------------------------------------- */
+h1, h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    color: #34495e;
+    font-size: 18px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    margin-top: 12px;
+}
+
+h4 {
+    color: #34495e;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   5. フォーム要素 (Form Elements)
+   -------------------------------------------------------------------------- */
+form > div,
+.setting > div {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    color: #495057;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+/* 補足説明テキスト & 必須/任意マーク */
+small {
+    display: block;
+    color: #6c757d;
+    font-size: 13px;
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+/* エラーメッセージ */
+p[style*="color: red"],
+p[errors],
+#result {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   6. ボタン & リンク (Buttons & Links)
+   -------------------------------------------------------------------------- */
+button,
+.btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: opacity 0.2s, background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+button:hover,
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* プライマリボタン (送信・登録・主要アクション) */
+button[type="submit"],
+#demoBtn,
+.btn-primary {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 14px 20px;
+    width: 100%;
+    max-width: 300px;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* セカンダリボタン & サブアクションボタン */
+.btn-secondary,
+button.change,
+button.tab-Btn {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 8px 16px;
+    margin: 4px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+button.change:hover,
+button.tab-Btn:hover {
+    background-color: #dee2e6;
+}
+
+/* リンク全般 */
+a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 戻る / キャンセルなどの控えめなテキストリンク */
+a[href*="detail"],
+a[href="/"],
+a[href="/login"],
+a[href="/terms"],
+.delete-account a {
+    color: #6c757d;
+    font-size: 14px;
+    display: inline-block;
+    margin-top: 12px;
+    margin-right: 16px;
+}
+
+a[href*="detail"]:hover,
+a[href="/"]:hover,
+.delete-account a:hover {
+    color: #343a40;
+}
+
+/* --------------------------------------------------------------------------
+   7. 特定コンポーネント固有スタイル
+   -------------------------------------------------------------------------- */
+/* リスト (ol, ul) */
+ol, ul {
+    padding-left: 24px;
+    margin-bottom: 16px;
+}
+
+li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+/* Q&A アコーディオン (details / summary) */
+details.qa-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
+}
+
+summary.question {
+    font-weight: bold;
+    color: #2c3e50;
+    cursor: pointer;
+    font-size: 15px;
+    outline: none;
+}
+
+summary.question:hover {
+    color: #007bff;
+}
+
+.answer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed #dee2e6;
+    color: #495057;
+    font-size: 14px;
+}
+
+/* 機能一覧カード (Topページ) */
+.feature-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.feature-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+/* ガイド用画像枠 (#frame) */
+#frame {
+    background-color: #e9ecef;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    min-height: 180px;
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* アクションボタン配置エリア */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+}

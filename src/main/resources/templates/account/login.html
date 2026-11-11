@@ -5,35 +5,42 @@
 </head>
 <body>
 
-<main>
+<main class="container">
     <h1>ログイン画面</h1>
-    <div class="login">
+    <div class="login-container">
+        
+        <!-- インラインスタイルを排除し、AIが色を調整しやすいクラスを付与 -->
         <div th:if="${param.error}">
-            <p style="color: red;">ユーザーネームまたはパスワードが違います</p>
+            <p class="alert-danger">ユーザーネームまたはパスワードが違います</p>
         </div>
         <div th:if="${param.logout}">
-            <p style="color: blue">ログアウトしました</p>
+            <p class="alert-info">ログアウトしました</p>
         </div>
         <div th:if="${param.deleted != null}">
-            <p style="color: blue">退会処理が完了しました</p>
+            <p class="alert-info">退会処理が完了しました</p>
         </div>
 
-        <p th:text="${message}">ユーザー登録後のメッセージ欄</p>
+        <p th:if="${message}" th:text="${message}" class="alert-info">ユーザー登録後のメッセージ欄</p>
 
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">ユーザーネーム</label>
+                <input type="text" name="username" id="username">
+            </div>
 
-            <label for="username">ユーザーネーム</label>
-            <input type="text" name="username"><br>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" name="password" id="password">
+            </div>
 
-            <label for="password">パスワード</label>
-            <input type="password" name="password"><br>
-
-            <button type="submit">ログイン</button>
-
+            <button type="submit" class="btn btn-primary">ログイン</button>
         </form>
 
-        <a th:href="@{/}">ホームへ戻る</a>
-        <a th:href="@{/signup}">新規登録はこちら</a>
+        <!-- リンク群をまとめて余白を取りやすくする -->
+        <div class="auth-links">
+            <a th:href="@{/}">ホームへ戻る</a>
+            <a th:href="@{/signup}">新規登録はこちら</a>
+        </div>
     </div>
 </main>
 </body>

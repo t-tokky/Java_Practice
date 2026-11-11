@@ -5,35 +5,39 @@
 </head>
 <body>
 
-<main>
+<main class="container">
     <h1>新規登録</h1>
 
-    <div class="signup">
-        <p th:if="${message}" th:text="${message}">登録失敗時のメッセージ欄</p>
+    <div class="signup-container">
+        <p th:if="${message}" th:text="${message}" class="alert-danger">登録失敗時のメッセージ欄</p>
 
-        <form th:action="@{/signup}" method="post" th:object="${registerForm}">
-
-            <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></p>
+        <form th:action="@{/signup}" method="post" th:object="${registerForm}" class="auth-form">
             
-            <label for="username">ユーザーネーム</label>
-            <input type="text" name="username"><br>
+            <div class="form-group">
+                <label for="username">ユーザーネーム</label>
+                <input type="text" name="username" id="username">
+                <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-text"></p>
+            </div>
 
-            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></p>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" name="password" id="password">
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-text"></p>
+            </div>
 
-            <label for="password">パスワード</label>
-            <input type="password" name="password"><br>
+            <div class="form-group">
+                <label for="passwordConfirm">確認用パスワード</label>
+                <input type="password" name="passwordConfirm" id="passwordConfirm">
+                <p th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="error-text"></p>
+            </div>
 
-            <p th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" style="color: red;"></p>
-
-            <label for="passwordConfirm">確認用パスワード</label>
-            <input type="password" name="passwordConfirm"><br>
-
-            <button type="submit">登録する</button>
-
+            <button type="submit" class="btn btn-primary">登録する</button>
         </form>
 
-        <a th:href="@{/}">ホームへ戻る</a>
-        <a th:href="@{/login}">登録済みのユーザーはこちら</a>
+        <div class="auth-links">
+            <a th:href="@{/}">ホームへ戻る</a>
+            <a th:href="@{/login}">登録済みのユーザーはこちら</a>
+        </div>
     </div>
 </main>
 

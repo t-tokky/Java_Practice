@@ -5,30 +5,53 @@
 </head>
 <body>
 
-<main>
+<main class="container">
     <h1>マイページ</h1>
+    
     <div class="setting-detail" th:object="${setting}">
-        <p th:if="${message}" th:text="${message}">フラッシュメッセージがなければpタグ自体が消える</p>
+        <p th:if="${message}" th:text="${message}" class="alert-success">フラッシュメッセージ</p>
+        
         <h2>現在の設定</h2>
-        <p>検索タグ<span th:text="*{includeTags}"></span></p>
-        <p>除外タグ<span th:text="*{excludeTags}"></span></p>
-        <p>Webhookの名前<span th:text="*{webhookName}"></span></p>
-        <p>
-            通知の切り替え
-            <span th:if="*{isActive}">通知あり</span>
-            <span th:if="!*{isActive}">通知なし</span>
-        </p>
-        <a th:href="@{/settings/form}">設定変更</a>
+        
+        <!-- 文字の詰まりを解消するため、pタグの羅列から tableタグ（表）に変更 -->
+        <table class="settings-table">
+            <tbody>
+                <tr>
+                    <th>検索タグ</th>
+                    <td th:text="*{includeTags}"></td>
+                </tr>
+                <tr>
+                    <th>除外タグ</th>
+                    <td th:text="*{excludeTags}"></td>
+                </tr>
+                <tr>
+                    <th>Webhookの名前</th>
+                    <td th:text="*{webhookName}"></td>
+                </tr>
+                <tr>
+                    <th>通知の切り替え</th>
+                    <td>
+                        <span th:if="*{isActive}">通知あり</span>
+                        <span th:if="!*{isActive}">通知なし</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ボタンをグループ化してCSSを当てやすくする -->
+        <div class="action-buttons">
+            <a th:href="@{/settings/form}" class="btn btn-primary">設定変更</a>
+        </div>
     </div>
 
-    <div class="logout">
+    <!-- 危険な操作（ログアウト・退会）は少し離したエリアにまとめる -->
+    <div class="danger-zone">
         <form th:action="@{/logout}" method="post">
-            <button type="submit">ログアウト</button>
+            <button type="submit" class="btn btn-outline">ログアウト</button>
         </form>
-    </div>
-
-    <div class="delete-account">
-        <a th:href="@{/user/delete/confirm}">ユーザー情報を削除する</a>
+        <div class="delete-account">
+            <a th:href="@{/user/delete/confirm}" class="text-danger">ユーザー情報を削除する</a>
+        </div>
     </div>
 </main>
 

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
 <head>
     <title>利用規約</title>
 </head>
 <body>
 
-<main>
+<main class="container">
     <section class="terms-section">
         <h2>利用規約・免責事項</h2>
         
-        <p>本規約は、「あの話、もうQiita?」（以下「本サービス」）の利用条件を定めるものです。本サービスはポートフォリオおよび学習目的で開発されたものであり、以下の事項にご同意いただいた上でご利用ください。</p>
+        <p class="terms-intro">本規約は、「あの話、もうQiita?」（以下「本サービス」）の利用条件を定めるものです。本サービスはポートフォリオおよび学習目的で開発されたものであり、以下の事項にご同意いただいた上でご利用ください。</p>
 
+        <!-- "1." が見出しの外に飛び出していたのを修正 -->
         <h3>1. アカウント管理と退会について</h3>
         <ul>
             <li>本サービスではパスワードの再発行は一切行えません。パスワードの管理はユーザー自身の責任で行うものとします。</li>
@@ -47,7 +48,7 @@
             <li>その他、開発者が不適切と判断する行為</li>
         </ul>
 
-        <p class="revision-date">
+        <p class="revision-date" style="text-align: right; margin-top: 2rem;">
             制定日：2026年11月11日
         </p>
     </section>
