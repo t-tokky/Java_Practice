@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>設定の変更</title>
+</head>
+<body>
+
+<main class="container">
+    <h1 th:if="${setting.id == null}">設定の新規登録</h1>
+    <h1 th:if="${setting.id != null}">設定の編集</h1>
+
+    <p class="form-description">Qiitaの新着記事をDiscordに通知するための条件を設定します。</p>
+
+    <form th:action="@{/settings/save}" th:object="${setting}" method="post" class="setting-form">
+        <input type="hidden" th:field="*{id}">
+
+        <!-- 各入力項目を div class="form-group" で囲み、brタグを排除 -->
+        <div class="form-group">
+            <label for="includeTags">検索タグ <span class="badge-required">[必須]</span></label>
+            <input type="text" th:field="*{includeTags}" placeholder="例: Java, SpringBoot" required>
+            <small class="help-text">
+                ※通知を受け取りたいタグを入力してください。複数の場合はカンマ（,）で区切ります。<br>
+                ※どんなタグがあるか探したい場合は、<a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer">Qiita公式のタグ一覧 ↗</a>を参照してください。
+            </small>
+            <p th:if="${#fields.hasErrors('includeTags')}" th:errors="*{includeTags}" class="error-text"></p>
+        </div>
+        
+        <div class="form-group">
+            <label for="excludeTags">除外タグ <span class="badge-optional">[任意]</span></label>
+            <input type="text" th:field="*{excludeTags}" placeholder="例: Python, Ruby">
+            <small class="help-text">※検索結果から弾きたいタグがあれば入力してください（カンマ区切り）。</small>
+        </div>
+
+        <div class="form-group">
+            <label for="webhookName">Webhookの名前 <span class="badge-required">[必須]</span></label>
+            <input type="text" th:field="*{webhookName}" placeholder="例: Java用通知Webhook" required>
+            <small class="help-text">※ご自身が管理しやすい好きな名前を入力してください。</small>
+            <p th:if="${#fields.hasErrors('webhookName')}" th:errors="*{webhookName}" class="error-text"></p>
+        </div>
+
+        <div class="form-group">
+            <label for="webhookUrl">Webhook URL</label>
+            <input type="password" id="webhookUrl" name="webhookUrl" placeholder="例: https://discord.com/api/webhooks/...">
+            <small class="help-text">
+                ※DiscordからURLをコピーして貼り付けてください。詳しい取得方法は<a th:href="@{/demo}">デモページ</a>を参照してください。<br>
+                ※セキュリティ保護のため、一度登録したURLは画面に再表示されません。<br>
+                ※変更しない場合は入力しないでください。
+            </small>
+            <p th:if="${#fields.hasErrors('webhookUrl')}" th:errors="*{webhookUrl}" class="error-text"></p>
+        </div>
+
+        <!-- チェックボックスは label の中に input を入れるとテキストクリックでも反応する -->
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" th:field="*{isActive}">
+                <span>通知を有効にする</span>
+            </label>
+            <small class="help-text">※チェックを外すと、設定を保持したまま通知を一時停止できます。</small>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/settings/detail}" class="btn btn-secondary">戻る</a>
+            <button type="submit" class="btn btn-primary" th:text="${setting.id == null} ? '登録' : '更新'">
+                送信ボタン
+            </button>
+        </div>
+    </form>
+</main>
+
+</body>
+</html>

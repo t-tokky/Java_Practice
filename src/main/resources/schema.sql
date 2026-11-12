@@ -27,7 +27,7 @@ CREATE TABLE notification_settings (
     exclude_tags VARCHAR(255),
     -- まずは1設定1URL 
     -- 複数URLを設定する場合、レコードの内容を複製することになる
-    webhook_url VARCHAR(255) NOT NULL,
+    webhook_url TEXT NOT NULL,
     webhook_name VARCHAR(255),
     -- 通知切り替え用 
     is_active BOOLEAN DEFAULT TRUE,

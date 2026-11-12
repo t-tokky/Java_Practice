@@ -7,6 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.portfolio.qiita_summary_notifier.config.PasswordConfig;
+
 public class Utility {
     // インスタンス化されないように隠蔽
     private Utility() {};
@@ -39,7 +43,7 @@ public class Utility {
 
     }
 
-        public static void writeUtf8Texts(String fileName, String content) {
+    public static void writeUtf8Texts(String fileName, String content) {
         try {
             Path filePath = Paths.get(fileName);
 
@@ -73,4 +77,11 @@ public class Utility {
 
     // javadocは使われているメソッド名にカーソルを重ねると内容が出てくるらしい
     // 思ったより見やすい 使っていったほうがいいかも
+
+
+    public static void createHashPassword() {
+        PasswordConfig config = new PasswordConfig();
+        PasswordEncoder encoder = config.passwordEncoder();
+        System.out.println(encoder.encode("password"));
+    }
 }

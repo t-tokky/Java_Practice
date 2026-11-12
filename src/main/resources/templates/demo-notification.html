@@ -1,84 +1,91 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
 <head>
-    <!-- 検索エンジンのクロールに引っかからないようにするためのメタデータ -->
-    <meta name="robots" content="noindex">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>お試し通知機能</title>
-    <!-- サーバーを起動しないテスト用にパスを複数記述 -->
-    <link rel="stylesheet" href="../static/css/style.css" 
-        th:href="@{/css/style.css}">
+    <title>デモ機能</title>
 </head>
 <body>
-    <h2>デモボタン画面</h2>
+
+<main class="container">
+    <h2>デモ機能を試す</h2>
     
     <section class="overview">
         <h3>概要</h3>
         <p class="description">
-            このツールは、Qiitaから指定したタグの最新記事を検索し、Discordのテキストチャンネルに通知するサービスです。<br>
-            興味のある技術（Java、Spring Bootなど）のタグを指定するだけでなく、不要なタグを除外して自分専用の情報フィードを作成できます。
+            このページでは実際に届く通知内容の体験ができます。
         </p>
 
-        <div class="overview-links">
-            <a href="https://qiita.com" target="_blank" rel="noopener noreferrer" class="qiita-link">
+        <!-- リンクをボタン風に装飾しやすくする -->
+        <!-- <div class="overview-links" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <a href="https://qiita.com" target="_blank" rel="noopener noreferrer" class="qiita-link btn btn-secondary">
                 Qiita公式サイト ↗
             </a>
-            <a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer" class="qiita-link">
+            <a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer" class="qiita-link btn btn-secondary">
                 Qiitaタグ一覧 ↗
             </a>
-        </div>
+        </div> -->
     </section>
 
     <section class="how-to">
         <h3>使い方</h3>
-        <ol>
-            <li>検索タグ・除外タグにQiitaのタグを「,」(カンマ)区切りで入力</li>
+        <ol class="how-to-list">
+            <li>検索タグ・除外タグにQiitaのタグを「,」（カンマ）区切りで入力</li>
             <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
             <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
         </ol>
 
-        <div class="guide-tabs">
+        <div class="guide-tabs" style="margin-top: 2rem;">
             <h4>WebhookURLの取得方法</h4> 
-            <div id="frame"></div>
-            <button type="button" id="prevBtn" class="change">前へ</button>
-            <button type="button" id="nextBtn" class="change">次へ</button><br>
-            <button type="button" class="pc tab-Btn">PC</button>
-            <button type="button" class="phone tab-Btn">スマホ</button>
+            
+            <!-- brタグをなくし、タブ切り替えボタンをグループ化 -->
+            <div class="tab-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button type="button" class="pc tab-Btn btn btn-outline">PC</button>
+                <button type="button" class="phone tab-Btn btn btn-outline">スマホ</button>
+            </div>
+
+            <!-- ここに大きさの違う画像が入る（JSのターゲットなのでIDは絶対維持） -->
+            <div id="frame" class="image-frame" style="margin-bottom: 1rem;"></div>
+            
+            <!-- スライド操作ボタンをグループ化 -->
+            <div class="slide-controls" style="display: flex; gap: 1rem;">
+                <button type="button" id="prevBtn" class="change btn btn-secondary">前へ</button>
+                <button type="button" id="nextBtn" class="change btn btn-secondary">次へ</button>
+            </div>
         </div>
     </section>
     
-    <div class="setting">
+    <!-- 他のページと同じ form-group 構造を適用 -->
+    <div class="setting setting-form" style="margin-top: 3rem;">
         <h3>入力フォーム</h3>
-        <div>
+        <div class="form-group">
             <label for="include">検索タグ：</label>
             <input type="text" id="include" placeholder="例: Java, Spring Boot">
+            <small class="help-text">
+                ※どんなタグがあるか探したい場合は、<a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer">Qiita公式のタグ一覧 ↗</a>を参照してください。
+            </small>
         </div>
         
-        <div>
+        <div class="form-group">
             <label for="exclude">除外タグ：</label>
             <input type="text" id="exclude" placeholder="例: AI, ポエム">
         </div>
         
-        <div>
+        <div class="form-group">
             <label for="webhookUrl">Webhook URL：</label>
             <input type="password" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
         </div>
     </div>
     
-    <button type="button" id="demoBtn">通知する</button>
-    <p id="result"></p>  <!-- ボタンを押した後のメッセージ欄 -->
+    <div class="form-actions" style="margin-top: 2rem;">
+        <!-- JS用IDを残したまま、デザイン用クラスを追加 -->
+        <button type="button" id="demoBtn" class="btn btn-primary">通知する</button>
+    </div>
+    
+    <p id="result" class="alert-info" style="margin-top: 1rem;"></p>  <!-- ボタンを押した後のメッセージ欄 -->
 
+    <!-- JSファイル読み込み（変更なし） -->
     <script src="../static/js/guide.js" th:src="@{/js/guide.js}"></script>
     <script src="../static/js/demo.js" th:src="@{/js/demo.js}"></script>
+</main>
+
 </body>
-<footer>
-    <a href="https://github.com/t-tokky/Java_Practice" target="_blank" class="github-link">
-        ソースコードを見る (GitHub)
-    </a>
-    <p>※本アプリはポートフォリオ用のデモです</p>
-    <p>※本サービスはQiitaの非公式ツールであり、Qiita株式会社とは一切関係ありません。</p>
-    <p>※検索して取得した記事の著作権は、それぞれの記事の著作者に帰属します。</p>
-    <p>※免責事項：本サービスを利用したことによって生じたトラブルや損害について、開発者は一切の責任を負いません。ご利用は自己責任でお願いいたします。</p>
-</footer>
 </html>
