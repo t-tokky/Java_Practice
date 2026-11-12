@@ -15,20 +15,20 @@
         </p>
 
         <!-- リンクをボタン風に装飾しやすくする -->
-        <div class="overview-links" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <!-- <div class="overview-links" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
             <a href="https://qiita.com" target="_blank" rel="noopener noreferrer" class="qiita-link btn btn-secondary">
                 Qiita公式サイト ↗
             </a>
             <a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer" class="qiita-link btn btn-secondary">
                 Qiitaタグ一覧 ↗
             </a>
-        </div>
+        </div> -->
     </section>
 
     <section class="how-to">
         <h3>使い方</h3>
         <ol class="how-to-list">
-            <li>検索タグ・除外タグにQiitaのタグを「,」(カンマ)区切りで入力</li>
+            <li>検索タグ・除外タグにQiitaのタグを「,」（カンマ）区切りで入力</li>
             <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
             <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
         </ol>
@@ -59,6 +59,9 @@
         <div class="form-group">
             <label for="include">検索タグ：</label>
             <input type="text" id="include" placeholder="例: Java, Spring Boot">
+            <small class="help-text">
+                ※どんなタグがあるか探したい場合は、<a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer">Qiita公式のタグ一覧 ↗</a>を参照してください。
+            </small>
         </div>
         
         <div class="form-group">

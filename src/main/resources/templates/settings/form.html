@@ -18,7 +18,10 @@
         <div class="form-group">
             <label for="includeTags">検索タグ <span class="badge-required">[必須]</span></label>
             <input type="text" th:field="*{includeTags}" placeholder="例: Java, SpringBoot" required>
-            <small class="help-text">※通知を受け取りたいタグを入力してください。複数の場合はカンマ（,）で区切ります。</small>
+            <small class="help-text">
+                ※通知を受け取りたいタグを入力してください。複数の場合はカンマ（,）で区切ります。<br>
+                ※どんなタグがあるか探したい場合は、<a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer">Qiita公式のタグ一覧 ↗</a>を参照してください。
+            </small>
             <p th:if="${#fields.hasErrors('includeTags')}" th:errors="*{includeTags}" class="error-text"></p>
         </div>
         

@@ -289,12 +289,12 @@ button:hover, .btn:hover {
     border-color: #adb5bd;
 }
 
-.btn-danger {
+.btn.btn-danger {
     background-color: #e74c3c;
     color: #ffffff;
 }
 
-.btn-danger:hover {
+.btn.btn-danger:hover {
     background-color: #c0392b;
 }
 
@@ -355,6 +355,11 @@ button:hover, .btn:hover {
     background-color: #e7f5ff;
     color: #1c7ed6;
     border: 1px solid #d0ebff;
+}
+
+/* クラス:empty クラスの要素がないときに適用する */
+.alert-info:empty {
+    display: none;
 }
 
 .alert-success {
@@ -543,13 +548,23 @@ summary.question {
 }
 
 .image-frame {
-    min-height: 180px;
+    min-height: 300px;
     background-color: #f8f9fa;
     border: 2px dashed #ced4da;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.image-frame img {
+    width: 100%;
+    max-width: 100%;       /* 横幅が親枠（frame）を超えないようにする */
+    height: auto;          /* 縦横比（アスペクト比）を崩さずに縮小する */
+    max-height: 500px;     /* スマホ用の縦長画像が画面を占領しすぎないよう上限を設ける */
+    object-fit: contain;   /* 画像が見切れることなく全体が綺麗に収まるようにする */
 }
 
 .terms-section {
