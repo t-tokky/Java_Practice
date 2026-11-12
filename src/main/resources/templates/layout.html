@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:replace="${title}">ここにタイトルをセット</title>
+    <link rel="stylesheet" href="../static/css/style.css" th:href="@{/css/style.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}">
+</head>
+<body>
+    
+    <!-- ヘッダーエリア -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <h1 class="site-title">あの話、もうQiita?</h1>
+            <nav class="site-nav">
+                <a th:href="@{/}">トップ</a>
+                <a th:href="@{/demo}">デモ</a>
+                <a th:href="@{/settings/detail}">マイページ</a>
+                <a th:href="@{/qa}">Q&A</a>
+                <a th:href="@{/signup}">新規登録</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- hrタグを削除し、代わりにCSSで上下に余白や線を設定させます -->
+
+    <main th:replace="${content}" class="container">
+        ここに個別のコンテンツ
+        mainタグが付いたものが入る
+    </main>
+
+    <!-- フッターエリア -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div class="footer-links">
+                <a href="https://github.com/t-tokky/Java_Practice" target="_blank" class="github-link">
+                    ソースコードを見る (GitHub)
+                </a>
+                <a th:href="@{/terms}">利用規約</a>
+            </div>
+            
+            <div class="footer-notes">
+                <p>※本アプリはポートフォリオ用のデモです</p>
+                <p>※本サービスはQiitaの非公式ツールであり、Qiita株式会社とは一切関係ありません。</p>
+                <p>※検索して取得した記事の著作権は、それぞれの記事の著作者に帰属します。</p>
+                <p>※本サービスを利用したことによって生じたトラブルや損害について、開発者は一切の責任を負いません。ご利用は自己責任でお願いいたします。</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

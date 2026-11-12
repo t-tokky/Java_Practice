@@ -2,6 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.portfolio.qiita_summary_notifier.repository.NotificationSettingMapper">
+
+    <!-- 
+        MyBatisのオートマッピングから手動マッピングに切り替え 
+        webhook_urlのみカスタムしたTypeHandlerを使っている
+    -->
+    <resultMap id="NotificationSettingResultMap" type="com.portfolio.qiita_summary_notifier.entity.NotificationSetting">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="includeTags" column="include_tags"/>
+        <result property="excludeTags" column="exclude_tags"/>
+        <result property="webhookUrl" column="webhook_url" 
+                typeHandler="com.portfolio.qiita_summary_notifier.security.CryptoTypeHandler"/>
+        <result property="webhookName" column="webhook_name"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
     <!-- 新規登録 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO notification_settings (
@@ -17,24 +35,24 @@
             #{userId},
             #{includeTags},
             #{excludeTags},
-            #{webhookUrl},
+            #{webhookUrl, typeHandler=com.portfolio.qiita_summary_notifier.security.CryptoTypeHandler},
             #{webhookName},
             #{isActive},
             CURRENT_TIMESTAMP
         )
     </insert>
     <!-- 有効な通知設定を検索する -->
-    <select id="selectActiveSettings" resultType="com.portfolio.qiita_summary_notifier.entity.NotificationSetting">
+    <select id="selectActiveSettings" resultMap="NotificationSettingResultMap">
         SELECT * FROM notification_settings
         WHERE is_active = true
     </select>
     <!-- ユーザーごとの設定一覧取得する -->
-    <select id="selectByUserId" resultType="com.portfolio.qiita_summary_notifier.entity.NotificationSetting">
+    <select id="selectByUserId" resultMap="NotificationSettingResultMap">
         SELECT * FROM notification_settings
         WHERE user_id = #{userId}
     </select>
     <!-- 1件取得 -->
-    <select id="selectById" resultType="com.portfolio.qiita_summary_notifier.entity.NotificationSetting">
+    <select id="selectById" resultMap="NotificationSettingResultMap">
         SELECT * FROM notification_settings
         WHERE id = #{id}
     </select>
@@ -43,7 +61,7 @@
         UPDATE notification_settings SET 
             include_tags = #{includeTags},
             exclude_tags = #{excludeTags},
-            webhook_url = #{webhookUrl},
+            webhook_url = #{webhookUrl, typeHandler=com.portfolio.qiita_summary_notifier.security.CryptoTypeHandler},
             webhook_name = #{webhookName},
             is_active = #{isActive},
             updated_at = CURRENT_TIMESTAMP
@@ -53,4 +71,10 @@
     <delete id="delete">
         DELETE FROM notification_settings WHERE id = #{id}
     </delete>
+
+    <update id="disableNotify">
+        UPDATE notification_settings 
+        SET is_active = false 
+        WHERE id = #{id}
+    </update>
 </mapper>

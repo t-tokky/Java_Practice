@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const excludeVal = document.getElementById('exclude').value;
         const urlVal = document.getElementById('webhookUrl').value;
         const resultArea = document.getElementById('result');
+        // metaタグからトークンとヘッダー名を取得
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
         // --- バリデーション（入力チェック） ---
         
@@ -67,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/notifications/demo', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    [header]: token
                 },
                 body: JSON.stringify(requestData)
             });

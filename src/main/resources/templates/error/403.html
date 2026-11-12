@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>アクセスできません</title>
+</head>
+<body>
+
+<main>
+    <h1>403</h1>
+    <h2>アクセス権限がありません</h2>
+    <p>このページを表示するための権限がありません、またはセッションが有効期限切れです。</p>
+    <p>再度トップページからやり直してください。</p>
+    <a th:href="@{/}">トップページへ戻る</a>
+</main>
+
+</body>
+</html>

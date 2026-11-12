@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.dao.DataAccessException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 import com.portfolio.qiita_summary_notifier.infrastructure.gemini.exception.GeminiSummaryFailedException;
@@ -59,8 +61,10 @@ public class QiitaNotificationService {
      * ここで記事が取得できなければ処理が動かない
      */
     // 有効な設定を全件取得してループで回す
-    // @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo")
+    // @Scheduled (cron = "0 * * * * *", zone = "Asia/Tokyo") // 毎分実行、テスト用
+    @Scheduled (cron = "0 30 7 * * *", zone = "Asia/Tokyo") // AM7:30実行 本番用
     public void execute() {
+        log.info("バッチ処理を開始");
         try {
             dbRetryTemplate.invoke(() -> {
                 List<NotificationSetting> settingsList = 
@@ -73,10 +77,11 @@ public class QiitaNotificationService {
             log.error("定期処理が実行できませんでした。\nDBにアクセスできません。\n{}", e);
             return;
         }
+        log.info("バッチ処理が終了");
     }
 
-    /**memo: でもボタン追加によるオーバーライドメソッドの追加
-     * でもボタンを実装しようとしていろいろ試してメソッドをオーバーロードすることにした
+    /**memo: デモボタン追加によるオーバーライドメソッドの追加
+     * デモボタンを実装しようとしていろいろ試してメソッドをオーバーロードすることにした
      * 場当たり感があるのでリファクタリングは必要
      */
     public void deliverArticles(NotificationSetting setting) {
@@ -130,9 +135,18 @@ public class QiitaNotificationService {
         }
 
         // Discordへ通知
-        boolean isCompleteNotify = notificationSender.notifyNewArticles(
-            setting.getWebhookUrl(), unformattedList
-        );
+        boolean isCompleteNotify = false;
+        try {
+            isCompleteNotify = notificationSender.notifyNewArticles(
+                setting.getWebhookUrl(), unformattedList
+            );
+        // URLが存在しない場合、is_activeをfalseにする
+        } catch (HttpClientErrorException.NotFound e) {
+            log.warn("Webhookの404エラー：ユーザーID{}の通知設定をOFFに切り替え", settingId);
+
+            notificationSettingMapper.disableNotify(settingId);
+        }
+
 
         // 通知履歴をDBへ保存
         if (isCompleteNotify && !isDemo) {

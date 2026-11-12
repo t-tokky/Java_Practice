@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>ホーム</title>
+</head>
+<body>
+
+<main>
+
+    <section class="hero-section">
+        <h2>Qiitaの技術記事を、もっと手軽に。</h2>
+        <p class="description">
+            「あの話、もうQiita?」は、技術プラットフォーム「<a href="https://qiita.com" target="_blank" rel="noopener noreferrer">Qiita</a>」の記事から指定したタグの最新記事をAIが要約し、
+            毎朝Discordへ自動で通知する情報収集サポートツールです。
+        </p>
+    </section>
+
+    <section class="features-section">
+        <h3>主な機能</h3>
+        <div class="feature-list">
+            <article class="feature-item">
+                <h4>1. 興味に合わせた柔軟なタグ設定</h4>
+                <p>
+                    「Java」や「Spring Boot」など読みたいタグを指定するだけでなく、不要なタグを除外する設定も可能です。ご自身の関心に合わせた専用の情報フィードを構築できます。
+                </p>
+            </article>
+
+            <article class="feature-item">
+                <h4>2. Geminiによる記事の3要素要約</h4>
+                <p>
+                    取得した記事をAIに渡し、「テーマ」「ポイント」「想定読者」の3つの要素に要約して通知します。リンクを開く前に記事のイメージが湧き、自分にとって必要な情報かをスムーズに判断できます。
+                </p>
+            </article>
+
+            <article class="feature-item">
+                <h4>3. 毎朝7:30のDiscord自動通知</h4>
+                <p>
+                    最新記事から3件をピックアップし、毎朝指定の時間にDiscordのテキストチャンネルへ送信します。PC・スマートフォン問わず、情報を確認できます。
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <section class="how-to-use-section">
+        <h3>ご利用手順</h3>
+        <ol class="step-list">
+            <li class="step-item">
+                <h4>STEP 1: ユーザー登録</h4>
+                <p>任意のIDとパスワードで登録を行います。（メールアドレス等の個人情報は不要です）</p>
+            </li>
+            <li class="step-item">
+                <h4>STEP 2: DiscordのWebhookとタグの登録</h4>
+                <p>通知先のDiscord Webhook URLと、取得したい技術タグ・除外したいタグを設定画面から入力します。</p>
+            </li>
+            <li class="step-item">
+                <h4>STEP 3: 通知の開始</h4>
+                <p>設定完了の翌朝から、設定内容に基づいた要約通知の配信が開始されます。</p>
+            </li>
+        </ol>
+    </section>
+
+    <section class="bottom-cta-section">
+        <div class="action-buttons">
+            <a th:href="@{/signup}" class="btn btn-primary">新規登録して利用する</a>
+            <a th:href="@{/demo}" class="btn btn-secondary">アプリを試す</a>
+            
+        </div>
+    </section>
+
+    <section class="background-section">
+        <h3>開発の背景</h3>
+        <p>
+            日々の技術情報収集において、「日常的に利用しているDiscord（スマートフォン）で通知を受け取りたい」「タイトルだけでなく、事前に要点を把握した上で記事を読みたい」と考えたのが開発のきっかけです。<br>
+            そこで、生成AI（Gemini）を利用して記事の要約を自動生成する仕組みを組み込めば、情報収集をより効率化できると考え、本アプリを制作しました。
+    </section>
+</main>
+
+</body>
+</html>

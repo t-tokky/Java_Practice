@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Q&A</title>
+</head>
+<body>
+
+<main class="container">
+    <h1>Q&A</h1>
+    <div class="qa-container">
+        <details class="qa-item">
+            <summary class="question">Q. Webhook URLとは何ですか？</summary>
+            <div class="answer">
+                <p>
+                    A. Discordの指定チャンネルにメッセージを送るための専用URLです。<br>
+                    Discordのチャンネル設定から数クリックで簡単に発行でき、不要になったらいつでも削除（無効化）できます。<br>
+                    <div class="text-danger">※URLを知っている人なら誰でもメッセージを送れてしまうため、インターネット上や他人に公開しないようご注意ください。</div>
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. パスワードを忘れてしまいました。</summary>
+            <div class="answer">
+                <p>
+                    A. パスワードを忘れた場合、再発行することはできません。<br>
+                    登録したWebhook URLを削除し、新たにユーザー登録をし直してください。
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. 通知を停止したい。</summary>
+            <div class="answer">
+                <p>
+                    A. 設定画面から通知の切り替えが可能です。<br>
+                    DiscordでWebhook URLを削除することでも、通知を停止できます。
+                </p>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. 通知が届きません。</summary>
+            <div class="answer">
+                <p>A. いくつかの原因が考えられます。以下の解決策をお試しください。</p>
+                <ul>
+                    <li>
+                        <strong>通知設定が「OFF」になっている</strong><br>
+                        → マイページの設定画面から、通知が「ON」になっているかご確認ください。
+                    </li>
+                    <li>
+                        <strong>Webhook URLが間違っている（または無効になっている）</strong><br>
+                        → DiscordでURLを新しく再発行し、マイページから登録し直してください。
+                    </li>
+                    <li>
+                        <strong>条件に合う新着記事がない</strong><br>
+                        → 指定したタグの新しい記事がQiitaに投稿されるまでお待ちいただくか、タグの条件（検索タグ・除外タグ）を変更してみてください。
+                    </li>
+                    <li>
+                        <strong>上記を試しても届かない場合</strong><br>
+                        → メニューの「デモ」画面から手動でテスト通知を行い、Discordに届くか確認してみてください。（それでも届かない場合は、システムのメンテナンス等で一時停止している可能性があります。）
+                    </li>
+                </ul>
+            </div>
+        </details>
+
+        <details class="qa-item">
+            <summary class="question">Q. 通知先のチャンネルを変更したい。</summary>
+            <div class="answer">
+                <p>
+                    A. 変更先のチャンネルで新しいWebhook URLを発行し、設定変更画面からURLを入力してください。
+                </p>
+            </div>
+        </details>
+    </div>
+    
+    <!-- リンクをグループ化 -->
+    <div class="page-links" style="margin-top: 2rem; display: flex; gap: 1rem;">
+        <a th:href="@{/}">ホームへ戻る</a>
+        <a th:href="@{/terms}">利用規約</a>
+    </div>
+</main>
+
+</body>
+</html>

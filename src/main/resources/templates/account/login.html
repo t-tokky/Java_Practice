@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>ログインフォーム</title>
+</head>
+<body>
+
+<main class="container">
+    <h1>ログイン画面</h1>
+    <div class="login-container">
+        
+        <!-- インラインスタイルを排除し、AIが色を調整しやすいクラスを付与 -->
+        <div th:if="${param.error}">
+            <p class="alert-danger">ユーザーネームまたはパスワードが違います</p>
+        </div>
+        <div th:if="${param.logout}">
+            <p class="alert-info">ログアウトしました</p>
+        </div>
+        <div th:if="${param.deleted != null}">
+            <p class="alert-info">退会処理が完了しました</p>
+        </div>
+
+        <p th:if="${message}" th:text="${message}" class="alert-info">ユーザー登録後のメッセージ欄</p>
+
+        <form th:action="@{/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">ユーザーネーム</label>
+                <input type="text" name="username" id="username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" name="password" id="password">
+            </div>
+
+            <button type="submit" class="btn btn-primary">ログイン</button>
+        </form>
+
+        <!-- リンク群をまとめて余白を取りやすくする -->
+        <div class="auth-links">
+            <a th:href="@{/}">ホームへ戻る</a>
+            <a th:href="@{/signup}">新規登録はこちら</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
