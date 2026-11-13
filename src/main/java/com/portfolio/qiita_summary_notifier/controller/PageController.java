@@ -8,12 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.portfolio.qiita_summary_notifier.form.RegisterForm;
 import com.portfolio.qiita_summary_notifier.security.CustomUserDetails;
 
-
-
-
-
-
-
 /**memo: このクラスの説明
  * このクラスはページ管理(htmlの切り替え)のみで使う
  * 画面を切り替えないものはNotificatinoApiControllerで作る

@@ -15,7 +15,6 @@ import com.portfolio.qiita_summary_notifier.entity.NotificationSetting;
 import com.portfolio.qiita_summary_notifier.form.SettingForm;
 import com.portfolio.qiita_summary_notifier.helper.SettingHelper;
 import com.portfolio.qiita_summary_notifier.security.CustomUserDetails;
-import com.portfolio.qiita_summary_notifier.service.QiitaNotificationService;
 import com.portfolio.qiita_summary_notifier.service.SettingsService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,6 @@ public class SettingsController {
 
     // DB操作のためのオブジェクトを注入
     private final SettingsService settingsService;
-
-    private final QiitaNotificationService notificationService;
 
     /**memo:設定一覧の表示
      * ユーザーが持っている設定を一覧で表示する画面を作成して出力する

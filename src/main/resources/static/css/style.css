@@ -524,12 +524,6 @@ summary.question {
     text-align: center;
 }
 
-.background-section {
-    margin-top: 32px;
-    font-size: 14px;
-    color: #495057;
-}
-
 /* --- 12. デモページ固有スタイル --- */
 .overview-links, .tab-buttons, .slide-controls {
     display: flex;
