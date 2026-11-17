@@ -35,6 +35,41 @@ IT関係の知識をキャッチアップするために技術ブログを読ん
 **デモ機能**
 - アカウント登録なしで実際の通知を体験できるデモページ
 
+## 流れ図
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as ユーザー
+    participant App as Spring Boot
+    participant DB as PostgreSQL
+    participant Qiita as Qiita API
+    participant Gemini as Gemini API
+    participant Discord as Discord
+
+    Note over User, DB: 【フェーズ1】ユーザーによる通知設定（画面操作）
+    User->>App: 検索・除外タグなどの設定を登録
+    App->>DB: ユーザー情報を保存
+    DB-->>App: 保存完了
+    App-->>User: 登録完了メッセージ
+
+    Note over App, Discord: 【フェーズ2】定期実行による通知バッチ処理
+    App->>DB: 登録済みのユーザー情報を取得
+    DB-->>App: ユーザー情報（タグ、Webhook URLなど）
+    App->>Qiita: タグに基づく記事検索をリクエスト
+    Qiita-->>App: JSONレスポンス（記事一覧）
+    
+    Note over App: 必要なデータ(URL, 本文等)だけを抽出
+    
+    App->>Gemini: 記事本文の要約をリクエスト
+    Gemini-->>App: 要約テキスト（構造化出力）
+    
+    Note over App: Discord用のJSONフォーマットに成形
+    
+    App->>Discord: Webhook経由でデータ送信
+    Discord-->>User: スマホ等で通知を確認
+```
+
 ## 使用技術
 
 - Java 21
