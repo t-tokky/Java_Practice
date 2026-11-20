@@ -78,6 +78,12 @@ sequenceDiagram
 - Qiita API / Gemini API / Discord Webhook API
 - PostgreSQL
 
+## アップデート履歴
+
+- v0.1 MVPを公開 2026/10/24
+- v1.0 サイトを公開 2026/11/14
+- v1.1 UIを改善 2026/11/20 
+
 ## 利用上の注意
 
 - 本アプリはポートフォリオ用です。予告なくサービスを終了する場合があります。
