@@ -125,6 +125,15 @@ class Guide {
     if (modalElm) {
       modalElm.src = image;
     }
+
+    // 枚数表示のためのテキスト
+    const currentText = `${this.currentIndex + 1} / ${this.currentImages.length}`;
+
+    const mainPageCountElm = document.getElementById("mainPageCount");
+    if (mainPageCountElm) mainPageCountElm.innerText = currentText;
+
+    const modalPageCountElm = document.getElementById("modalPageCount");
+    if (modalPageCountElm) modalPageCountElm.innerText = currentText;
   }
 
   get lastIndex() {

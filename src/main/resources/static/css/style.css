@@ -686,3 +686,32 @@ summary.question {
 .modal-nav-btn.next {
   right: 20px;
 }
+
+/* カウント表示の基本デザイン（メイン画面・モーダル共通） */
+.page-count {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px; /* 数字の間隔を少し空けて読みやすく */
+    text-align: center;
+}
+
+/* ★モーダルの中のカウント専用の装飾 */
+#modalPageCount {
+    position: fixed; /* 画面に固定して浮かせる */
+    bottom: 30px;    /* 下から30pxの位置 */
+    left: 50%;       /* 左右の中央に寄せるための準備 */
+    transform: translateX(-50%); /* 完全に中央に揃えるおまじない */
+    
+    /* 視認性を上げるための「座布団」 */
+    background: rgba(0, 0, 0, 0.7); /* 半透明の黒背景 */
+    color: white;                   /* 文字は白 */
+    padding: 8px 16px;              /* 文字の周りに余白を作る */
+    border-radius: 20px;            /* 角を丸くしてカプセル型にする */
+    z-index: 10;                    /* 画像より手前に出す */
+}
+
+/* メイン画面のカウント専用の装飾（お好みで） */
+#mainPageCount {
+    color: #555;     /* メイン画面なら少し落ち着いたグレーなど */
+    margin-top: 5px;
+}

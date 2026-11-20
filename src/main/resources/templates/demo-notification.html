@@ -52,12 +52,15 @@
 
           <!-- ここに大きさの違う画像が入る（JSのターゲットなのでIDは絶対維持） -->
           <div id="frame" class="image-frame" style="margin-bottom: 1rem"></div>
+          <div id="mainPageCount" class="page-count"></div>
           <dialog id="imageModal">
             <button id="closeModalBtn">×</button>
             <button id="modalPrevBtn" class="modal-nav-btn prev">◂</button>
             <img id="modalImg" src="" alt="拡大画像" class="modal-img" />
             <button id="modalNextBtn" class="modal-nav-btn next">▸</button>
+            <div id="modalPageCount" class="page-count"></div>
           </dialog>
+
 
           <!-- スライド操作ボタンをグループ化 -->
           <div class="slide-controls" style="display: flex; gap: 1rem">
