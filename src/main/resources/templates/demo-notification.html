@@ -1,17 +1,20 @@
-<!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head>
+<!doctype html>
+<html
+  lang="ja"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+>
+  <head>
     <title>デモ機能</title>
-</head>
-<body>
+  </head>
+  <body>
+    <main class="container">
+      <h2>デモ機能を試す</h2>
 
-<main class="container">
-    <h2>デモ機能を試す</h2>
-    
-    <section class="overview">
+      <section class="overview">
         <h3>概要</h3>
         <p class="description">
-            このページでは実際に届く通知内容の体験ができます。
+          このページでは実際に届く通知内容の体験ができます。
         </p>
 
         <!-- リンクをボタン風に装飾しやすくする -->
@@ -23,69 +26,94 @@
                 Qiitaタグ一覧 ↗
             </a>
         </div> -->
-    </section>
+      </section>
 
-    <section class="how-to">
+      <section class="how-to">
         <h3>使い方</h3>
         <ol class="how-to-list">
-            <li>検索タグ・除外タグにQiitaのタグを「,」（カンマ）区切りで入力</li>
-            <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
-            <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
+          <li>検索タグ・除外タグにQiitaのタグを「,」（カンマ）区切りで入力</li>
+          <li>DiscordのテキストチャンネルからWebhook URLを取得して入力</li>
+          <li>通知ボタンを押してDiscordのテキストチャンネルを確認</li>
         </ol>
 
-        <div class="guide-tabs" style="margin-top: 2rem;">
-            <h4>WebhookURLの取得方法</h4> 
-            
-            <!-- brタグをなくし、タブ切り替えボタンをグループ化 -->
-            <div class="tab-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                <button type="button" class="pc tab-Btn btn btn-outline">PC</button>
-                <button type="button" class="phone tab-Btn btn btn-outline">スマホ</button>
-            </div>
+        <div class="guide-tabs" style="margin-top: 2rem">
+          <h4>WebhookURLの取得方法</h4>
 
-            <!-- ここに大きさの違う画像が入る（JSのターゲットなのでIDは絶対維持） -->
-            <div id="frame" class="image-frame" style="margin-bottom: 1rem;"></div>
-            
-            <!-- スライド操作ボタンをグループ化 -->
-            <div class="slide-controls" style="display: flex; gap: 1rem;">
-                <button type="button" id="prevBtn" class="change btn btn-secondary">前へ</button>
-                <button type="button" id="nextBtn" class="change btn btn-secondary">次へ</button>
-            </div>
+          <!-- brタグをなくし、タブ切り替えボタンをグループ化 -->
+          <div
+            class="tab-buttons"
+            style="display: flex; gap: 0.5rem; margin-bottom: 1rem"
+          >
+            <button type="button" class="pc tab-Btn btn btn-outline">PC</button>
+            <button type="button" class="phone tab-Btn btn btn-outline">
+              スマホ
+            </button>
+          </div>
+
+          <!-- ここに大きさの違う画像が入る（JSのターゲットなのでIDは絶対維持） -->
+          <div id="frame" class="image-frame" style="margin-bottom: 1rem"></div>
+          <dialog id="imageModal">
+            <button id="closeModalBtn">×</button>
+            <button id="modalPrevBtn" class="modal-nav-btn prev">◂</button>
+            <img id="modalImg" src="" alt="拡大画像" class="modal-img" />
+            <button id="modalNextBtn" class="modal-nav-btn next">▸</button>
+          </dialog>
+
+          <!-- スライド操作ボタンをグループ化 -->
+          <div class="slide-controls" style="display: flex; gap: 1rem">
+            <button type="button" id="prevBtn" class="change btn btn-secondary">
+              前へ
+            </button>
+            <button type="button" id="nextBtn" class="change btn btn-secondary">
+              次へ
+            </button>
+          </div>
         </div>
-    </section>
-    
-    <!-- 他のページと同じ form-group 構造を適用 -->
-    <div class="setting setting-form" style="margin-top: 3rem;">
+      </section>
+
+      <!-- 他のページと同じ form-group 構造を適用 -->
+      <div class="setting setting-form" style="margin-top: 3rem">
         <h3>入力フォーム</h3>
         <div class="form-group">
-            <label for="include">検索タグ：</label>
-            <input type="text" id="include" placeholder="例: Java, Spring Boot">
-            <small class="help-text">
-                ※どんなタグがあるか探したい場合は、<a href="https://qiita.com/tags" target="_blank" rel="noopener noreferrer">Qiita公式のタグ一覧 ↗</a>を参照してください。
-            </small>
+          <label for="include">検索タグ：</label>
+          <input type="text" id="include" placeholder="例: Java, Spring Boot" />
+          <small class="help-text">
+            ※どんなタグがあるか探したい場合は、<a
+              href="https://qiita.com/tags"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Qiita公式のタグ一覧 ↗</a
+            >を参照してください。
+          </small>
         </div>
-        
+
         <div class="form-group">
-            <label for="exclude">除外タグ：</label>
-            <input type="text" id="exclude" placeholder="例: AI, ポエム">
+          <label for="exclude">除外タグ：</label>
+          <input type="text" id="exclude" placeholder="例: AI, ポエム" />
         </div>
-        
+
         <div class="form-group">
-            <label for="webhookUrl">Webhook URL：</label>
-            <input type="password" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
+          <label for="webhookUrl">Webhook URL：</label>
+          <input
+            type="password"
+            id="webhookUrl"
+            placeholder="https://discord.com/api/webhooks/..."
+          />
         </div>
-    </div>
-    
-    <div class="form-actions" style="margin-top: 2rem;">
+      </div>
+
+      <div class="form-actions" style="margin-top: 2rem">
         <!-- JS用IDを残したまま、デザイン用クラスを追加 -->
-        <button type="button" id="demoBtn" class="btn btn-primary">通知する</button>
-    </div>
-    
-    <p id="result" class="alert-info" style="margin-top: 1rem;"></p>  <!-- ボタンを押した後のメッセージ欄 -->
+        <button type="button" id="demoBtn" class="btn btn-primary">
+          通知する
+        </button>
+      </div>
 
-    <!-- JSファイル読み込み（変更なし） -->
-    <script src="../static/js/guide.js" th:src="@{/js/guide.js}"></script>
-    <script src="../static/js/demo.js" th:src="@{/js/demo.js}"></script>
-</main>
+      <p id="result" class="alert-info" style="margin-top: 1rem"></p>
+      <!-- ボタンを押した後のメッセージ欄 -->
 
-</body>
+      <script src="../static/js/guide.js" th:src="@{/js/guide.js}"></script>
+      <script src="../static/js/demo.js" th:src="@{/js/demo.js}"></script>
+    </main>
+  </body>
 </html>
