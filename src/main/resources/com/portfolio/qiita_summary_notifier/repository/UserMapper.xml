@@ -15,10 +15,6 @@
         )
     </insert>
 
-    <select id="selectById" resultType="com.portfolio.qiita_summary_notifier.entity.UserEntity">
-        SELECT * FROM users WHERE id = #{id}
-    </select>
-
     <select id="selectByUsername" resultType="com.portfolio.qiita_summary_notifier.entity.UserEntity">
         SELECT * FROM users WHERE username = #{username}
     </select>
@@ -27,14 +23,6 @@
     <select id="existsByUsername" resultType="boolean">
         SELECT EXISTS (SELECT 1 FROM users WHERE username = #{username})
     </select>
-
-    <update id="update">
-        UPDATE users SET 
-            username = #{username},
-            password_hash = #{passwordHash},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = #{id}
-    </update>
 
     <delete id="delete">
         DELETE FROM users WHERE id = #{id}

@@ -12,20 +12,18 @@ public interface NotificationSettingMapper {
     // 設定の新規登録
     void insert(NotificationSetting setting);
 
-    // アクティブな設定の検索 リストで返す
-    // 通知を送るときに使う
+    // アクティブな設定の検索
     List<NotificationSetting> selectActiveSettings();
 
-    // ユーザーごとの設定一覧を取得
-    List<NotificationSetting> selectByUserId(@Param("userId") Integer userId);
-    // 設定の検索(1件のみ) 詳細表示などで使う？
+    // 設定の検索(1件のみ)
     NotificationSetting selectById(@Param("id") Integer id);
 
     // 設定の更新
     void update(NotificationSetting setting);
+
     // 設定の削除
     void delete(@Param("id") Integer id);
 
-    // isActiveをfalseにする
+    // 通知送信をoffに切り替える
     void disableNotify(@Param("id") Integer id);
 }

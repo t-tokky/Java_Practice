@@ -30,11 +30,6 @@ public class SettingsServiceImpl implements SettingsService{
             settingMapper.insert(setting);
         }
     };
-
-    @Override 
-    public List<NotificationSetting> selectByUserId(Integer userId) {
-        return settingMapper.selectByUserId(userId);
-    };
     
     @Override 
     public NotificationSetting selectById(Integer id) {

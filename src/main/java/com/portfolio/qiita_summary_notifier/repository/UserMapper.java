@@ -7,17 +7,15 @@ import com.portfolio.qiita_summary_notifier.entity.UserEntity;
 
 @Mapper 
 public interface UserMapper {
-
+    // ユーザーを新規作成
     void insert(UserEntity user);
 
-    UserEntity selectById(@Param("id") Integer id);
-
-    // 認証時に使う
+    // ログイン認証時に名前を使う
     UserEntity selectByUsername(@Param("username") String username);
 
+    // 使用済みの名前かどうかを確認する
     boolean existsByUsername(@Param("username") String username);
 
-    void update(UserEntity user);
-
+    // ユーザー情報の削除
     void delete(@Param("id") Integer id);
 }
