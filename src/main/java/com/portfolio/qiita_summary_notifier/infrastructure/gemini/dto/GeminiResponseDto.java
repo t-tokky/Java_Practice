@@ -18,5 +18,4 @@ public class GeminiResponseDto {
 
     @JsonProperty("target_audience") 
     private String targetAudience;
-
 }
