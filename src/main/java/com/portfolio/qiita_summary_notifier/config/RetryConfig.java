@@ -13,36 +13,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-// RetryTemplateを作るための設定クラス
 @Configuration
 public class RetryConfig {
-    
-    /**memo: RetryTemplateを作る
-     * まずは@BeanでDIコンテナにオブジェクトを用意する
-     * 最終的に返すRetryTemplateを作るための流れ
-     * RetryPolicy: templateの設定を定義するクラス
-     *              buildパターンを使って設定を追加していく
-     * maxRetries:  リトライ回数の最大
-     * includes:    キャッチする例外     
-     * excludes:    キャッチしない例外
-     * delay:       最初にリトライするまでのディレイ
-     * multiplier:  再試行時に遅延時間を増やすときの指数
-     * maxDelay:    ディレイの最大値、増えすぎないようにするため
-     * 
-     * 現在は同じ設定だが、今後変わる可能性も十分あるので個別に設定する
-     */
-
-    /**memo: HTTPステータスコード
-     * HttpClientErrorException: 400~499
-     *  こちら側が何かミスがあるときのコード
-     *  前提が間違っているのでリトライしない
-     * HttpServerErrorException: 500~599
-     *  サーバー側の不具合
-     *  内部エラーやリクエスト過多でパンクしてたりなので、時間をおいて再度リトライ
-     * ResourceAccessException: ステータスコード無し
-     *  HTTP応答が返ってこない状態
-     *  サーバーがダウンしていたり、通信が切れたりした時なので、時間をおいて再度リトライ
-     */
+    // Qiita API用: 復旧の可能性があるもののみリトライさせる
     @Bean
     @Qualifier ("qiitaRetryTemplate")
     public RetryTemplate qiitaRetryTemplate() {
@@ -58,6 +31,7 @@ public class RetryConfig {
         );
     }
 
+    // Discord API用: APIごとの特性に合わせて個別調整をするため、独立して定義する
     @Bean 
     @Qualifier ("discordRetryTemplate")
     public RetryTemplate discordRetryTemplate() {
@@ -73,6 +47,7 @@ public class RetryConfig {
         );
     }
 
+    // TODO: DBアクセス用 当初クラウドDBを使う予定で設定していたが、内部DBに切り替わったため要修正
     @Bean 
     @Qualifier ("dbRetryTemplate")
     public RetryTemplate dbRetryTemplate() {

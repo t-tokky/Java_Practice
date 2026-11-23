@@ -6,27 +6,18 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**memo: discordドキュメントの見方
- * 
- * 
- * 
- * tips: たいていのドキュメントは?が任意を表す
- * Fieldに?がたくさんついてたけど、すべてあってもなくてもいい
- */
 @Data
 @NoArgsConstructor
 public class DiscordWebhookRequestDto {
 
     // Botの名前 (指定が可能)
-    private String username = "Qiita通知Bot";
+    private String username = "あの話、もうQiita？";
     private List<Embed> embeds = new ArrayList<>();
     
     // 1通知で複数のembedを出力するためのメソッド
     public void addEmbed(Embed embed) {
         this.embeds.add(embed);
     }
-
-    // --- ここから下はインナークラス ---
 
     @Data
     @NoArgsConstructor

@@ -17,22 +17,10 @@ import okhttp3.OkHttpClient;
 @Configuration
 public class GeminiClientConfig {
 
+    // ClientクラスはGemini APIライブラリのオブジェクトなので、Gemini APIのドキュメントを参照すること
     @Bean
     Client geminiClient(@Value("${gemini.api.token}") String apiToken) {
-        /**memo: geminiAPIのClientオブジェクトを作成
-         * OkHttpClientでタイムアウト設定をしている
-         * geminiAPIライブラリは内部でOkHttpClientという別のライブラリを採用している(?)のでこちらの記述方法
-         * callTimeout: 全体のタイムアウト時間
-         * 
-         * ClientはgeminiAPIライブラリのオブジェクト
-         * 構造化スキーマやプロンプトの設定からHTTPリクエストまで全部やるオブジェクト
-         * new Client:      環境変数にapiKeyを置いておけば自動で読み込むので.apiKey()が必要ない
-         *                  今回はlocalから読み込むので.apiKeyが必要だった
-         * builder, build:  ビルダーパターンのひとつ
-         *                  最近のライブラリだとよく使われるらしい(RestClientもそうだった)
-         * apiKey:          apiKeyを設定  
-         * clientOptions:   引数でOkHttpClientオブジェクトをhttpClientオブジェクトとして作り直している(?)
-         */
+
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofSeconds(10)) // 接続確立まで
                 .readTimeout(Duration.ofSeconds(60))    // データ受信中の待ち時間
@@ -42,11 +30,11 @@ public class GeminiClientConfig {
         HttpRetryOptions retryOptions = HttpRetryOptions.builder()
                 .attempts(3) // 初回を含めて最大3回
                 .httpStatusCodes(
-                        IntStream.concat(
-                                IntStream.of(429),
-                                IntStream.rangeClosed(500, 599))
-                                .boxed()
-                                .toList())
+                    IntStream.concat(
+                        IntStream.of(429),  // 429 too many request だけリトライさせる
+                        IntStream.rangeClosed(500, 599))
+                    .boxed()
+                    .toList())
                 .build();
 
         return Client.builder()
