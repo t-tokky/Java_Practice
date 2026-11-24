@@ -9,7 +9,7 @@ public class CustomUserDetails extends User {
     
     private final Integer id;
     
-    // コンストラクタを拡張して、idを保持する
+    // ログイン中のユーザーIDを使って処理を行う(ユーザー削除など)ため、コンストラクタを拡張
     public CustomUserDetails(UserEntity user) {
         super(
             user.getUsername(), 

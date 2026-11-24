@@ -41,7 +41,6 @@ public class SettingsServiceImpl implements SettingsService{
         settingMapper.delete(id);
     };
 
-    // 全ユーザーのアクティブな設定を取得
     @Override 
     public List<NotificationSetting> selectActiveSettings() {
         return settingMapper.selectActiveSettings();

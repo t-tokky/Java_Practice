@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.portfolio.qiita_summary_notifier.form.RegisterForm;
 import com.portfolio.qiita_summary_notifier.security.CustomUserDetails;
 
-/**memo: このクラスの説明
- * このクラスはページ管理(htmlの切り替え)のみで使う
- * 画面を切り替えないものはNotificatinoApiControllerで作る
- */
 @Controller 
 public class PageController {   
 
@@ -19,7 +15,6 @@ public class PageController {
     public String top() {
         return "index";
     }
-    
 
     @GetMapping ("/demo")
     public String demo() {
@@ -34,12 +29,11 @@ public class PageController {
     @GetMapping("/terms")
     public String terms() {
         return "terms";
-    }
-    
+    } 
 
     @GetMapping("/login")
     public String showLogin(@AuthenticationPrincipal CustomUserDetails loginUser) {
-        // ログイン済みならdetailに飛ばす
+        // ログイン済みユーザーに2重にログインをさせない
         if (loginUser != null) {
             return "redirect:/settings/detail";
         }

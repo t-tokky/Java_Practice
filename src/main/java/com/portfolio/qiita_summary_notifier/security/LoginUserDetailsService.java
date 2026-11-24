@@ -16,12 +16,6 @@ public class LoginUserDetailsService implements UserDetailsService{
         this.userMapper = userMapper;
     }
 
-    /**memo: 認証の流れ
-     * 引数にusernameを受け取ってそれをもとにユーザーを検索
-     * 合致したレコードを取り出し、usernameとpassword、authorities(許可)をUserオブジェクトに入れて返す
-     * このSecurityが用意するUserオブジェクトに入れないとSecurityは読めない
-     * (今回はUserを継承したカスタムクラスを作って返している)
-     */
     @Override 
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userMapper.selectByUsername(username);

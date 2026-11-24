@@ -33,18 +33,16 @@ public class SignupController {
         String password = form.getPassword();
         String passwordConfirm = form.getPasswordConfirm();
 
-        if (bindingResult.hasErrors()) {  // バリデーション
+        if (bindingResult.hasErrors()) {  
             return "account/signup";
         }
 
-        // 確認用パスワードの一致を確認
         if (!password.equals(passwordConfirm)) {
             model.addAttribute("message", "確認用パスワードが一致しません");
 
             return "account/signup";
         }
 
-        // 名前が使われているかを確認
         if (userMapper.existsByUsername(username)) {
             model.addAttribute("message", "その名前は既に使われています");
 
@@ -55,6 +53,5 @@ public class SignupController {
         redirectAttributes.addFlashAttribute("message", "登録が完了しました");
         
         return "redirect:/login";
-    }
-    
+    } 
 }

@@ -18,10 +18,10 @@ public class CryptoConfig {
     @Value("${app.crypto.salt}")
     private String salt;
 
-    // 暗号化のための道具(TextEncryptor)を作成する
+    // AES-GCM方式(暗号化+改ざんチェック)のTextEncryptor(暗号化の道具)を作る
     @Bean
     public TextEncryptor textEncryptor() {
-        // AES-GCM方式(暗号化+改ざんチェック)の暗号化の道具を作る
+        
         BytesEncryptor bytesEncryptor = AesGcmBytesEncryptor.withPassword(secretKey, salt).build();
         return new MyHexEncodingTextEncryptor(bytesEncryptor);
     }

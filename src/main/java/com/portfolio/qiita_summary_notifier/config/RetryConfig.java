@@ -47,7 +47,7 @@ public class RetryConfig {
         );
     }
 
-    // TODO: DBアクセス用 当初クラウドDBを使う予定で設定していたが、内部DBに切り替わったため要修正
+    // FIXME: DBアクセス用 当初クラウドDBを使う予定で設定していたが、内部DBに切り替わったため要修正
     @Bean 
     @Qualifier ("dbRetryTemplate")
     public RetryTemplate dbRetryTemplate() {

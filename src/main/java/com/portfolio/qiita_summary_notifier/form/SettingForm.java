@@ -11,13 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor 
 @AllArgsConstructor 
 public class SettingForm {
-    private Integer id;  // 新規登録・更新の違いを受け取ったIDの有無で切り替える
+    // 新規登録・更新の違いをidの有無で切り替える
+    private Integer id;  
+    
     @NotBlank (message = "必須項目です")
     private String includeTags;
     private String excludeTags;
+    
     @NotBlank (message = "必須項目です")
     private String webhookName;
-    // ここで必須項目として入れてしまったことで空欄時の処理にたどり着かない
+    
     @Pattern (regexp = "^(https://discord\\.com/api/webhooks/\\d+/[a-zA-Z0-9_-]+)?$", message = "正しいURLを入力してください")
     @Size(max = 255, message = "正しいURLを入力してください")
     private String webhookUrl;

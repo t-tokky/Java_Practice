@@ -11,7 +11,6 @@ import com.portfolio.qiita_summary_notifier.repository.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 
-// 新規ユーザーには必ず初期設定が必要なためエラーが起きたら差し戻せるようにした
 @Transactional
 @Service
 @RequiredArgsConstructor 

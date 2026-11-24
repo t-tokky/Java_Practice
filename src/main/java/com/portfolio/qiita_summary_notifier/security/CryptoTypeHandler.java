@@ -13,16 +13,14 @@ import com.portfolio.qiita_summary_notifier.helper.SpringContextHolder;
 
 import lombok.NoArgsConstructor;
 
-/**memo: TypeHandlerの解説
- * TypeHandlerはDBとJavaでデータの出し入れをするときの型変換を行うクラス
- * MyBatisはTypeHandlerを自動で使用して型変換を行う
- * その時使うTypeHandlerをカスタマイズして拡張したのがこのクラス
- */
+// DB登録時に暗号化処理を挟むため、継承して拡張する
 @NoArgsConstructor 
 public class CryptoTypeHandler extends BaseTypeHandler<String> {
 
     private TextEncryptor textEncryptor;
 
+    // MyBatisによってインスタンス化されるので、DIによる取得ができない
+    // そのため、初回実行時にDIコンテナから直接取得する
     private TextEncryptor getTextEncryptor() {
         if (this.textEncryptor == null) {
             this.textEncryptor = SpringContextHolder.getBean(TextEncryptor.class);

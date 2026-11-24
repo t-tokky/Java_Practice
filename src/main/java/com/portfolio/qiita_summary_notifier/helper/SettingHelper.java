@@ -5,11 +5,6 @@ import com.portfolio.qiita_summary_notifier.form.SettingForm;
 
 public class SettingHelper {
 
-    /**memo: コンバーター
-     * フォームから入力を受け取る + すでに保存されている設定情報を表示する
-     * SettingForm <-> NotificationSetting の双方向の変換が必要
-     * 
-     */
     public static NotificationSetting convertSetting(SettingForm form) {
         NotificationSetting setting = new NotificationSetting();
         setting.setId(form.getId());

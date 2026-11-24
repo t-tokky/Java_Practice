@@ -30,7 +30,7 @@ public class AccountDeleteController {
         Integer currentUserId = loginUserDetails.getId();
         deletionService.deleteAccount(currentUserId);
 
-        // ログアウト処理のテンプレート  /logoutの内部ではこれが実行されている
+        // セッション情報が残らないようにログアウト処理をする
         SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(request, response, auth);
         

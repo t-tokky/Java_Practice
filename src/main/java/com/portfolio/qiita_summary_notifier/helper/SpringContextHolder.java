@@ -5,10 +5,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-/**memo: Beanを呼ぶためのヘルパー
- * 任意のタイミングでアプリのどの部分からでもBeanを呼べるようにする？
- * 理解できてないので後で調べる
- */
+// MyBatisのTypeHandlerはSpringの管轄外で生成されているため、Bean取得ができない
+// TypeHandlerをBeanとして管理するためのヘルパークラス
 @Component
 public class SpringContextHolder implements ApplicationContextAware {
 

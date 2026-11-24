@@ -6,13 +6,8 @@ import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 
-/**memo: オリジナルのTextEncryptor
- * 暗号化に使うためのオブジェクトを作るクラス
- * 本来は作らなくてもTextEncryptorのBeanを作成できる(Encryptor.textなど)が
- * すでに非推奨となっており、代替するものがBytesEncryptorを実装したクラスだった
- * BytesEncryptorは入出力をbyte[]で行うので、テスト時に使いづらいことから
- * TextEncryptorを実装してラップしている
- */
+// BytesEncryptorは入出力をByte[]で行う
+// テスト時にByte[]では使いづらいため、文字列に変換するようにした
 public class MyHexEncodingTextEncryptor implements TextEncryptor{
 
     private final BytesEncryptor encryptor;

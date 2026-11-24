@@ -1,7 +1,7 @@
 # 概要
 
 後で見返して学習ノートとしてまとめるためのメモの断片  
-とりあえずここに避難して、時間の空いたタイミングでまとめていく  
+とりあえずここに避難して、時間の空いたタイミングでまとめていく
 
 ## 断片
 
@@ -34,3 +34,41 @@
     * 要素数0のリストオブジェクトはstreamやforを使うと、処理をスキップする
     * 例外は出ないので、分岐させて早めに通知メソッドを呼ぶ必要はない
     */
+
+    /**memo: エンコーダー
+    * パスワードのハッシュ化(encode())や検証(matches())を行うのがこのメソッドが返すオブジェクト
+    * 今回のPasswordEncoderオブジェクトは、ハッシュ値の先頭にアルゴリズム名を付与して保存する({bcrypt}$2a$10...)
+    * これによって別アルゴリズムに移行しても接頭辞から識別が可能
+    */
+
+    /**memo: オリジナルのTextEncryptor
+    * 暗号化に使うためのオブジェクトを作るクラス
+    * 本来は作らなくてもTextEncryptorのBeanを作成できる(Encryptor.textなど)が
+    * すでに非推奨となっており、代替するものがBytesEncryptorを実装したクラスだった
+    * BytesEncryptorは入出力をbyte[]で行うので、テスト時に使いづらいことから
+    * TextEncryptorを実装してラップしている
+    */
+
+    /**memo: 認証の流れ
+    * 引数にusernameを受け取ってそれをもとにユーザーを検索
+    * 合致したレコードを取り出し、usernameとpassword、authorities(許可)をUserオブジェクトに入れて返す
+    * このSecurityが用意するUserオブジェクトに入れないとSecurityは読めない
+    * (今回はUserを継承したカスタムクラスを作って返している)
+    */
+
+    /**memo: TypeHandlerの解説
+    * TypeHandlerはDBとJavaでデータの出し入れをするときの型変換を行うクラス
+    * MyBatisはTypeHandlerを自動で使用して型変換を行う
+    * その時使うTypeHandlerをカスタマイズして拡張したのがこのクラス
+    */
+
+    // ログアウト処理のテンプレート  /logoutの内部ではこれが実行されている
+    SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+    logoutHandler.logout(request, response, auth);
+
+    /**memo: 設定の登録
+     * フォーム画面から受け取ったformオブジェクトをコンバートしてentityに変換
+     * 新規ではない&&入力がない場合は既存のurlを使うと解釈し、DBからデータを取り出してセット
+     * DBに受け取ったデータを登録
+     * フラッシュメッセージと合わせてsettings/detailにリダイレクト
+     */

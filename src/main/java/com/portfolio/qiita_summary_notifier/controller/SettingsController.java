@@ -25,28 +25,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor 
 public class SettingsController {
 
-    // DB操作のためのオブジェクトを注入
     private final SettingsService settingsService;
 
-    /**memo:設定一覧の表示
-     * ユーザーが持っている設定を一覧で表示する画面を作成して出力する
-     * ユーザーごとのIDはspring securityを入れたタイミングで受け渡せるようになる
-     * テスト段階ではidを1に固定しておき、security導入後で変更する
-     * 引数に@AuthenticationPrincipalというアノテーションを付けたオブジェクトを指定するらしい
-     */
-    // @GetMapping
-    // public String showSettings(Model model) {
-    //     Integer userId = 1;  // 仮の値
-    //     model.addAttribute("settings", settingsService.selectByUserId(userId));
-
-    //     return "settings/menu";
-    // }
-    
-    /**memo: 新規設定・設定更新
-     * 設定の分岐はRequestParamで受け取る
-     * 値があればそのIDを使ってDBから取得
-     * 値がなければ空のSettingFormオブジェクトを渡す
-     */
+    // 新規設定と更新の二つをこのメソッドで行うために、idを用いた条件分岐
     @GetMapping("/form")
     public String formSetting(
         @AuthenticationPrincipal CustomUserDetails loginUser, 
@@ -63,12 +44,6 @@ public class SettingsController {
         return "settings/form";
     }
 
-    /**memo: 設定の登録
-     * フォーム画面から受け取ったformオブジェクトをコンバートしてentityに変換
-     * 新規ではない&&入力がない場合は既存のurlを使うと解釈し、DBからデータを取り出してセット
-     * DBに受け取ったデータを登録
-     * フラッシュメッセージと合わせてsettings/detailにリダイレクト
-     */
     @PostMapping("/save")
     public String saveSetting(
         @ModelAttribute("setting") @Validated SettingForm form, 
@@ -83,8 +58,6 @@ public class SettingsController {
         }
 
         if (bindingResult.hasErrors()) {
-            // model.addAttribute("id", form.getId());
-
             return "settings/form";
         }
 
@@ -93,17 +66,11 @@ public class SettingsController {
         settingsService.saveSettings(setting);
     
         redirectAttributes.addFlashAttribute("message", message);
-        // // urlの末尾にパラメーターを追加するメソッド(detail?id=値の形)
-        // redirectAttributes.addAttribute("id", setting.getId());
 
         return "redirect:/settings/detail";
     }
 
-
-    // 現在はuserIdとsettingIdは1対1対応している
-    // なので、設定情報を取り出すselectById()に直接渡しても問題はない
-    // 今後ユーザーが複数の設定を持つことになったら、直接ではなく設定のIDを持ってきてからそれぞれ取得する必要がある
-    // 複数の設定を持ってくるのはshowSettings()の役割なので、拡張するときは流れが大きく変わる
+    // TODO: 処理を簡略化するためにuserIdとsettingIdを対応させているが、本来は想定していないので機能拡張時に変更する
     @GetMapping("/detail")
     public String detailSetting(
         @AuthenticationPrincipal CustomUserDetails loginUser, 
