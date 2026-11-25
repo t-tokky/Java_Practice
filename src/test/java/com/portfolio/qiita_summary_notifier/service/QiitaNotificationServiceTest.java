@@ -120,10 +120,10 @@ class QiitaNotificationServiceTest {
                 .thenReturn(false);
 
         // Geminiから要約が返ってきたことにする
-        when(summarizer.fetchSummaryOfArticle(article))
+        when(summarizer.fetchArticleSummaries(article))
                 .thenReturn(summary);
 
-        when(notificationSender.notifyNewArticles(
+        when(notificationSender.notifyArticleSummaries(
         eq("https://example.com/webhook"),
         anyList()))
         .thenReturn(true);
@@ -133,11 +133,11 @@ class QiitaNotificationServiceTest {
 
         // 5. 期待した処理が呼ばれたか確認する
         verify(articleProvider, times(1)).fetchArticles("Java", "ポエム");
-        verify(summarizer).fetchSummaryOfArticle(article);
+        verify(summarizer).fetchArticleSummaries(article);
 
         // 通知時に渡された記事の内容を取り出す
         ArgumentCaptor<List> articlesCaptor = ArgumentCaptor.forClass(List.class);
-        verify(notificationSender).notifyNewArticles(
+        verify(notificationSender).notifyArticleSummaries(
                 eq("https://example.com/webhook"),  // captureを使う場合、ほかの引数もepなどのメソッドが必要になる？
                 articlesCaptor.capture()
         );

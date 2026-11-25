@@ -43,7 +43,7 @@ class DiscordWebhookClientTest {
                 .andExpect(jsonPath("$.embeds[0].title").value("テスト記事"))
                 .andRespond(withStatus(HttpStatus.NO_CONTENT));
 
-        boolean result = fixture.client.notifyNewArticles(
+        boolean result = fixture.client.notifyArticleSummaries(
                 WEBHOOK_URL, List.of(createArticleWithSummary()));
 
         assertTrue(result);
@@ -62,7 +62,7 @@ class DiscordWebhookClientTest {
                         .value("記事を取得できませんでした。\n次回の通知をお待ちください。"))
                 .andRespond(withStatus(HttpStatus.NO_CONTENT));
 
-        boolean result = fixture.client.notifyNewArticles(
+        boolean result = fixture.client.notifyArticleSummaries(
                 WEBHOOK_URL, List.of());
 
         assertFalse(result);
@@ -77,7 +77,7 @@ class DiscordWebhookClientTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
                 
-        boolean result = fixture.client.notifyNewArticles(
+        boolean result = fixture.client.notifyArticleSummaries(
                 WEBHOOK_URL, List.of(createArticleWithSummary()));
 
         assertFalse(result);
@@ -98,7 +98,7 @@ class DiscordWebhookClientTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.NO_CONTENT));
 
-        boolean result = fixture.client.notifyNewArticles(
+        boolean result = fixture.client.notifyArticleSummaries(
                 WEBHOOK_URL, List.of(createArticleWithSummary()));
 
         assertTrue(result);

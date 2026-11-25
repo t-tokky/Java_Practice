@@ -31,7 +31,7 @@ public class DiscordWebhookClient implements NotificationSender {
     }
 
     @Override
-    public boolean notifyNewArticles(String webhookUrl, List<ArticleWithSummary> unformattedDataList) {
+    public boolean notifyArticleSummaries(String webhookUrl, List<ArticleWithSummary> unformattedDataList) {
 
         DiscordWebhookRequestDto contents = createEmbed(unformattedDataList);
 

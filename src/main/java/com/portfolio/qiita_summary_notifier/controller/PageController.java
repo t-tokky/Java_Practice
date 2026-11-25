@@ -12,22 +12,22 @@ import com.portfolio.qiita_summary_notifier.security.CustomUserDetails;
 public class PageController {   
 
     @GetMapping("/")
-    public String top() {
+    public String showTop() {
         return "index";
     }
 
     @GetMapping ("/demo")
-    public String demo() {
+    public String showDemo() {
         return "demo-notification";
     }
 
     @GetMapping("/qa")
-    public String help() {
+    public String showHelp() {
         return "qa";
     }
     
     @GetMapping("/terms")
-    public String terms() {
+    public String showTerms() {
         return "terms";
     } 
 

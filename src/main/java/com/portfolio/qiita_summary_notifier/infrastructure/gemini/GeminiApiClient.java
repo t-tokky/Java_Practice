@@ -42,7 +42,7 @@ public class GeminiApiClient implements Summarizer{
     }
 
     @Override
-    public GeminiResponseDto fetchSummaryOfArticle(Article article) {
+    public GeminiResponseDto fetchArticleSummaries(Article article) {
         // スキーマの定義からプロンプトまで作成
         CreateModelInteraction params = createPrompt(article.getTitle(), article.getBody());
 

@@ -4,5 +4,5 @@ import com.portfolio.qiita_summary_notifier.infrastructure.gemini.dto.GeminiResp
 
 // geminiに要約してもらうためのインターフェース
 public interface Summarizer {
-    public GeminiResponseDto fetchSummaryOfArticle(Article article);
+    public GeminiResponseDto fetchArticleSummaries(Article article);
 }

@@ -44,7 +44,7 @@ class GeminiApiClientTest {
                 attempt -> new ApiResponse(200, interactionJson()))) {
 
             GeminiResponseDto result =
-                    fixture.client.fetchSummaryOfArticle(createArticle());
+                    fixture.client.fetchArticleSummaries(createArticle());
 
             assertEquals("Javaの例外処理", result.getTheme());
             assertEquals("例外処理の基本を学べます", result.getKeyTakeaways());
@@ -63,7 +63,7 @@ class GeminiApiClientTest {
             return new ApiResponse(200, interactionJson());
         })) {
             GeminiResponseDto result =
-                    fixture.client.fetchSummaryOfArticle(createArticle());
+                    fixture.client.fetchArticleSummaries(createArticle());
 
             assertEquals("Javaの例外処理", result.getTheme());
             assertEquals(2, fixture.requestCount());
@@ -79,7 +79,7 @@ class GeminiApiClientTest {
             GeminiSummaryFailedException exception =
                     assertThrows(
                             GeminiSummaryFailedException.class,
-                            () -> fixture.client.fetchSummaryOfArticle(
+                            () -> fixture.client.fetchArticleSummaries(
                                     createArticle()));
 
             assertTrue(exception.getMessage().contains("article-1"));
@@ -97,7 +97,7 @@ class GeminiApiClientTest {
             GeminiSummaryFailedException exception =
                     assertThrows(
                             GeminiSummaryFailedException.class,
-                            () -> fixture.client.fetchSummaryOfArticle(
+                            () -> fixture.client.fetchArticleSummaries(
                                     createArticle()));
 
             assertTrue(exception.getMessage().contains("article-1"));
@@ -115,7 +115,7 @@ class GeminiApiClientTest {
             GeminiSummaryFailedException exception =
                     assertThrows(
                             GeminiSummaryFailedException.class,
-                            () -> fixture.client.fetchSummaryOfArticle(
+                            () -> fixture.client.fetchArticleSummaries(
                                     createArticle()));
 
             assertTrue(exception.getMessage().contains("article-1"));

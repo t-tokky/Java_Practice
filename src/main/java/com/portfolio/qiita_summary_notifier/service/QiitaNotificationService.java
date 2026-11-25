@@ -92,7 +92,7 @@ public class QiitaNotificationService {
         for (Article article : latestArticles) {
             try {
                 ArticleWithSummary unformattedData = 
-                    new ArticleWithSummary(article, summarizer.fetchSummaryOfArticle(article));
+                    new ArticleWithSummary(article, summarizer.fetchArticleSummaries(article));
                 unformattedList.add(unformattedData);
             } catch (GeminiSummaryFailedException e) {
                 log.error("GeminiApiエラー: {}", e);
@@ -102,7 +102,7 @@ public class QiitaNotificationService {
         // Discordへ通知
         boolean isCompleteNotify = false;
         try {
-            isCompleteNotify = notificationSender.notifyNewArticles(
+            isCompleteNotify = notificationSender.notifyArticleSummaries(
                 setting.getWebhookUrl(), unformattedList
             );
 

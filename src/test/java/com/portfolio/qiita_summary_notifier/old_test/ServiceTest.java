@@ -73,7 +73,7 @@ public class ServiceTest {
 
             articleWithSummarys.forEach(aws -> System.out.println(aws));
 
-            discordWebhookClient.notifyNewArticles(discordWebhookToken, articleWithSummarys);
+            discordWebhookClient.notifyArticleSummaries(discordWebhookToken, articleWithSummarys);
 
         } catch (Exception e) {
 
